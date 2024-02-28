@@ -16,6 +16,30 @@
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
 
+        <!-- Phone Number -->
+        <div class="mt-4">
+            <x-input-label for="phone_number" :value="__('Phone Number')" />
+            <x-text-input id="phone_number" class="block mt-1 w-full" type="text" name="phone_number" :value="old('phone_number')" required autocomplete="tel" />
+            <x-input-error :messages="$errors->get('phone_number')" class="mt-2" />
+        </div>
+        <!-- Type -->
+        <div class="mt-4">
+            <x-input-label for="type" :value="__('Type')" />
+            <select id="type" name="type" class="block mt-1 w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                <option value="employee" {{ old('type', 'employee') === 'employee' ? 'selected' : '' }}>Employee</option>
+                <option value="admin" {{ old('type') === 'admin' ? 'selected' : '' }}>Admin</option>
+            </select>
+        <x-input-error :messages="$errors->get('type')" class="mt-2" />
+        </div>
+
+
+        <!-- Salary -->
+        <div class="mt-4">
+            <x-input-label for="salary" :value="__('Salary')" />
+            <x-text-input id="salary" class="block mt-1 w-full" type="number" name="salary" :value="old('salary')" required autocomplete="salary" />
+            <x-input-error :messages="$errors->get('salary')" class="mt-2" />
+        </div>
+
         <!-- Password -->
         <div class="mt-4">
             <x-input-label for="password" :value="__('Password')" />
@@ -49,4 +73,5 @@
             </x-primary-button>
         </div>
     </form>
+
 </x-guest-layout>
