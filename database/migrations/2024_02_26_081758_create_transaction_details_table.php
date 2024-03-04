@@ -13,9 +13,10 @@ return new class extends Migration
     {
         Schema::create('transaction_details', function (Blueprint $table) {
             $table->id();
-            $table->string('transaction_header_id')->references('id')->on('transaction_headers')->onUpdate('cascade')->onDelete('cascade');
-            $table->string('product_id')->references('id')->on('products')->onUpdate('cascade')->onDelete('cascade');
-            $table->integer('quantity');
+            $table->unsignedBigInteger('transaction_header_id');
+            $table->foreign('transaction_header_id')->references('id')->on('transaction_header')->onUpdate('cascade')->onDelete('cascade');
+            $table->unsignedBigInteger('product_id');
+            $table->foreign('product_id')->references('id')->on('products')->onUpdate('cascade')->onDelete('cascade');            $table->integer('quantity');
             $table->integer('discount');
             $table->string('status');
             $table->timestamps();

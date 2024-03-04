@@ -13,11 +13,14 @@ return new class extends Migration
     {
         Schema::create('supplier_pricings', function (Blueprint $table) {
             $table->id();
-            $table->string('product_id')->references('id')->on('products')->onUpdate('cascade')->onDelete('cascade');
-            $table->string('supplier_id')->references('id')->on('suppliers')->onUpdate('cascade')->onDelete('cascade');
+            $table->unsignedBigInteger('product_id');
+            $table->foreign('product_id')->references('id')->on('products')->onUpdate('cascade')->onDelete('cascade');
+            $table->unsignedBigInteger('supplier_id');
+            $table->foreign('supplier_id')->references('id')->on('suppliers')->onUpdate('cascade')->onDelete('cascade');
             $table->integer('price');
             $table->timestamps();
         });
+
     }
 
     /**

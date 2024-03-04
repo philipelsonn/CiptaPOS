@@ -13,9 +13,12 @@ return new class extends Migration
     {
         Schema::create('transaction_header', function (Blueprint $table) {
             $table->id();
-            $table->string('payment_method_id')->references('id')->on('payment_methods')->onUpdate('cascade')->onDelete('cascade');
-            $table->string('cashier_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
-            $table->timestamps('transaction_date');
+            $table->unsignedBigInteger('payment_method_id');
+            $table->foreign('payment_method_id')->references('id')->on('payment_methods')->onUpdate('cascade')->onDelete('cascade');
+            $table->unsignedBigInteger('cashier_id');
+            $table->foreign('cashier_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
+            $table->timestamp('transaction_date')->nullable();
+            $table->timestamps();
         });
     }
 
