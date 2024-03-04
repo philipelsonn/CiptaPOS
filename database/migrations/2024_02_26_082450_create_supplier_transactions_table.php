@@ -13,10 +13,12 @@ return new class extends Migration
     {
         Schema::create('supplier_transactions', function (Blueprint $table) {
             $table->id();
-            $table->string('supplier_price_id')->references('id')->on('suplier_pricings')->onUpdate('cascade')->onDelete('cascade');
+            $table->unsignedBigInteger('supplier_price_id');
+            $table->foreign('supplier_price_id')->references('id')->on('supplier_pricings')->onUpdate('cascade')->onDelete('cascade');
             $table->integer('quantity');
-            $table->timestamps('transaction_date');
+            $table->timestamp('transaction_date');
         });
+
     }
 
     /**
