@@ -16,7 +16,6 @@ class UsersTableSeeder extends Seeder
      */
     public function run(): void
     {
-
         // DB::table('users')->truncate();
         DB::table('users')->insert([
             'name' => 'John Doe',
@@ -24,6 +23,7 @@ class UsersTableSeeder extends Seeder
             'email_verified_at' => now(),
             'phone_number' => '123456789',
             'type' => 'employee',
+            'avatar' => 'image/default-male.png',
             'salary' => 500000,
             'password' => Hash::make('Testing12345'),
             'remember_token' => Str::random(10),
@@ -37,6 +37,7 @@ class UsersTableSeeder extends Seeder
             'email_verified_at' => now(),
             'phone_number' => '123456789',
             'type' => 'admin',
+            'avatar' => 'image/default-male.png',
             'salary' => 5000000,
             'password' => Hash::make('Password12345'),
             'remember_token' => Str::random(10),
