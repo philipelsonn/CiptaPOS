@@ -1,4 +1,4 @@
-<section class="ml-20">
+<section class="ml-20" style="min-height: calc(100vh - 20px)"">
     <div class="flex">
         <div class="w-1/2">
             <header>
