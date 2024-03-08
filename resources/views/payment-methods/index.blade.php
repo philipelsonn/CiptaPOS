@@ -3,6 +3,8 @@
 @section('title', 'CiptaPOS | Manage Payment Methods')
 
 @section('content')
+
+@include('layouts.navbar')
     <div class="container my-auto">
         <div class="card p-4 bg-light mt-3 mb-3">
             <div class="d-flex justify-content-between mt-2 mb-4">
