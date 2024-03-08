@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\PaymentMethodController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\RegisteredUserController;
@@ -35,5 +36,7 @@ Route::get('/employee', function () {
 })->middleware(['auth', 'verified'])->name('employee');
 
 
+
+Route::resource('payment-methods',PaymentMethodController::class)->except('show');
 
 require __DIR__.'/auth.php';
