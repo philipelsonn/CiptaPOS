@@ -2,22 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\PaymentMethod;
+use App\Models\ProductCategory;
 use Illuminate\Http\Request;
 
-class PaymentMethodController extends Controller
+class ProductCategoryController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return view('payment-methods.index',[
-            'paymentMethods' => PaymentMethod::all()
+        return view('product-categories.index',[
+            'productCategories' => ProductCategory::all()
         ]);
     }
 
-    /**
+     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
@@ -26,36 +26,36 @@ class PaymentMethodController extends Controller
             'name' => 'required|string',
         ]);
 
-        PaymentMethod::create([
+        ProductCategory::create([
             'name' => $request->name,
         ]);
 
-        return redirect()->route("payment-methods.index");
+        return redirect()->route("product-categories.index");
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, PaymentMethod $paymentMethod)
+    public function update(Request $request, ProductCategory $productCategory)
     {
         $request->validate([
             'name'=>'required|string',
         ]);
 
-        $paymentMethod->update([
+        $productCategory->update([
             'name'=>$request->name,
         ]);
 
-        return redirect()->route('payment-methods.index');
+        return redirect()->route('product-categories.index');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(PaymentMethod $paymentMethod)
+    public function destroy(ProductCategory $productCategory)
     {
-        $paymentMethod->delete();
+        $productCategory->delete();
 
-        return redirect()->route("payment-methods.index");
+        return redirect()->route("product-categories.index");
     }
 }
