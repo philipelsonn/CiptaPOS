@@ -17,7 +17,7 @@ class Product extends Model
 
     public function productCategory(): HasOne
     {
-        return $this->hasOne(ProductCategory::class);
+        return $this->hasOne(ProductCategory::class, 'id', 'category_id');
     }
 
     public function transactionDetail(): BelongsTo
