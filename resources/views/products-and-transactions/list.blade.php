@@ -39,6 +39,7 @@
                     <option value="{{ $paymentMethod->id }}">{{ $paymentMethod->name }}</option>
                 @endforeach
             </select>
+            <button id="clear-all-button" style="background-color: #dc3545; color: white; border: none; padding: 0.5rem 1rem; border-radius: 0.25rem; cursor: pointer; margin-top: 1rem;">Clear All</button>
             <button id="checkout-button" style="background-color: #28a745; color: white; border: none; padding: 0.5rem 1rem; border-radius: 0.25rem; cursor: pointer; margin-top: 1rem;">Checkout</button>
         </div>
     </div>
@@ -46,37 +47,43 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-    const products = document.querySelectorAll('.product');
-    const selectedProducts = document.getElementById('selected-products');
-    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            const products = document.querySelectorAll('.product');
+            const selectedProducts = document.getElementById('selected-products');
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
-    products.forEach(product => {
-        const addToCartButton = product.querySelector('.add-to-cart');
-        const productId = product.getAttribute('data-product-id');
-        const stock = parseInt(product.querySelector('.stock').textContent.replace('Stock: ', ''));
+            products.forEach(product => {
+            const addToCartButton = product.querySelector('.add-to-cart');
+            const productId = product.getAttribute('data-product-id');
+            const stock = parseInt(product.querySelector('.stock').textContent.replace('Stock: ', ''));
 
-        addToCartButton.addEventListener('click', function() {
-            const existingProductIndex = cart.findIndex(item => item.id === productId);
+            document.getElementById('clear-all-button').addEventListener('click', function() {
+                cart = [];
+                renderCart();
+                localStorage.removeItem('cart');
+            });
 
-            if (existingProductIndex !== -1) {
-                // Product already in cart, increment quantity if below stock
-                if (cart[existingProductIndex].quantity < cart[existingProductIndex].stock) {
-                    cart[existingProductIndex].quantity++;
+            addToCartButton.addEventListener('click', function() {
+                const existingProductIndex = cart.findIndex(item => item.id === productId);
+
+                if (existingProductIndex !== -1) {
+                        // Product already in cart, increment quantity if below stock
+                    if (cart[existingProductIndex].quantity < cart[existingProductIndex].stock) {
+                            cart[existingProductIndex].quantity++;
+                    } else {
+                        // Show alert if trying to add more than stock
+                        alert('Cannot add more. Stock limit reached.');
+                    }
                 } else {
-                    // Show alert if trying to add more than stock
-                    alert('Cannot add more. Stock limit reached.');
-                }
-            } else {
                 // Product not in cart, add to cart with quantity default to 1
-                const productName = product.querySelector('h3').textContent;
-                const productPrice = parseFloat(product.querySelector('#product-price-discounted').innerText.replace('Price: Rp ', ''));
-                cart.push({ id: productId, name: productName, price: productPrice, quantity: 1, stock: stock });
-            }
+                    const productName = product.querySelector('h3').textContent;
+                    const productPrice = parseFloat(product.querySelector('#product-price-discounted').innerText.replace('Price: Rp ', ''));
+                    cart.push({ id: productId, name: productName, price: productPrice, quantity: 1, stock: stock });
+                }
 
-            renderCart();
-            localStorage.setItem('cart', JSON.stringify(cart));
+                renderCart();
+                localStorage.setItem('cart', JSON.stringify(cart));
+            });
         });
-    });
 
     function renderCart() {
         selectedProducts.innerHTML = '';
