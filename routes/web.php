@@ -4,7 +4,7 @@ use App\Http\Controllers\PaymentMethodController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\RegisteredUserController;
-use App\Models\Product;
+use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\TransactionController;
 
@@ -45,6 +45,14 @@ Route::get('/employees', [ProfileController::class, 'index'])->middleware(['auth
 
 
 Route::resource('payment-methods',PaymentMethodController::class)->except('show');
+
+Route::resource('product-categories',ProductCategoryController::class)->except([
+    'create', 'edit', 'show'
+]);
+
+Route::resource('products',ProductController::class)->except([
+    'create', 'edit', 'show'
+]);
 
 Route::post('/transactions', [TransactionController::class, 'store'])->name('transactions.store');
 
