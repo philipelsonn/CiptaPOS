@@ -40,6 +40,7 @@ Route::get('/employee', function () {
 
 Route::post('/transaction', [TransactionController::class, 'store'])->name('transaction.store');
 
+Route::get('/employees', [ProfileController::class, 'index'])->middleware(['auth', 'verified'])->name('employee.index');
 
 
 
