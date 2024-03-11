@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class TransactionHeader extends Model
 {
     use HasFactory;
-    protected $table = 'transaction_header';
+    protected $table = 'transaction_headers';
     protected $primaryKey = 'id';
     protected $timestamp = true;
     protected $guarded = [];
