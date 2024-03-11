@@ -44,8 +44,9 @@ Route::get('/employees', [ProfileController::class, 'index'])->middleware(['auth
 
 
 
-Route::resource('payment-methods',PaymentMethodController::class)->except('show');
-
+Route::resource('payment-methods',PaymentMethodController::class)->except([
+    'create', 'edit', 'show'
+]);
 Route::resource('product-categories',ProductCategoryController::class)->except([
     'create', 'edit', 'show'
 ]);
