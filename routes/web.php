@@ -4,6 +4,9 @@ use App\Http\Controllers\PaymentMethodController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Models\Product;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\TransactionController;
 
 
 /*
@@ -35,8 +38,17 @@ Route::get('/employee', function () {
     return view('employee.employeelist');
 })->middleware(['auth', 'verified'])->name('employee');
 
+Route::post('/transaction', [TransactionController::class, 'store'])->name('transaction.store');
+
+
 
 
 Route::resource('payment-methods',PaymentMethodController::class)->except('show');
+
+Route::post('/transactions', [TransactionController::class, 'store'])->name('transactions.store');
+
+Route::get('transactions', [TransactionController::class, 'index']);
+
+
 
 require __DIR__.'/auth.php';

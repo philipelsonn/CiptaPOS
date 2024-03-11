@@ -18,6 +18,7 @@ return new class extends Migration
             $table->mediumText('description');
             $table->string('image');
             $table->unsignedBigInteger('category_id');
+            $table->integer('discount');
             $table->foreign('category_id')->references('id')->on('product_categories')->onUpdate('cascade')->onDelete('cascade');
             $table->integer('stock');
             $table->timestamps();
