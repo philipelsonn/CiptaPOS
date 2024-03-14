@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\PaymentMethod;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use Illuminate\Http\Request;
@@ -98,4 +99,19 @@ class ProductController extends Controller
 
         return redirect()->route("products.index");
     }
+    public function search(Request $request)
+    {
+        $query = $request->input('q');
+
+        if ($query) {
+             // Lakukan pencarian berdasarkan query
+            $products = Product::where('name', 'like', '%' . $query . '%')->paginate(5);;
+        }
+        else{
+            $products = Product::paginate(5);;
+        }
+        $paymentMethods = PaymentMethod::all();
+        return view('products-and-transactions.list', compact('products', 'paymentMethods'));
+    }
+
 }

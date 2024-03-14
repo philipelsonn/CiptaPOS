@@ -6,7 +6,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\StockoutController;
 use App\Http\Controllers\TransactionController;
+use App\Models\Product;
 
 
 /*
@@ -58,6 +60,21 @@ Route::resource('products',ProductController::class)->except([
 Route::post('/transactions', [TransactionController::class, 'store'])->name('transactions.store');
 
 Route::get('transactions', [TransactionController::class, 'index']);
+
+Route::resource('/stockout',StockoutController::class)->except([
+    'create', 'edit', 'show'
+]);
+
+Route::get('/search', function () {
+    $query = request()->query('q');
+    // Lakukan pencarian berdasarkan nilai $query
+    // Misalnya, menggunakan model Product dan metode pencarian seperti where atau search
+    $results = Product::where('name', 'like', '%'.$query.'%')->get();
+    return response()->json($results);
+});
+Route::get('/product/search', [ProductController::class, 'search'])->name('product/search');
+
+
 
 
 

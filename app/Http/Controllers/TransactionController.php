@@ -12,7 +12,7 @@ class TransactionController extends Controller
 {
     public function index()
     {
-        $products = Product::paginate(2); // Menampilkan 10 produk per halaman
+        $products = Product::paginate(5); // Menampilkan 10 produk per halaman
         $paymentMethods = PaymentMethod::all();
         return view('products-and-transactions.list', compact('products', 'paymentMethods'));
     }
@@ -35,6 +35,12 @@ class TransactionController extends Controller
             $transactionDetail->quantity = $item['quantity'];
             $transactionDetail->price = $item['price'];
             $transactionDetail->save();
+
+            $product = Product::find($item['id']);
+            if ($product) {
+                $product->stock -= $item['quantity'];
+                $product->save();
+            }
         }
 
         $request->session()->forget('cart');

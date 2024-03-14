@@ -11,7 +11,15 @@
         <!-- Navigation Links -->
         <div class="hidden sm:flex sm:items-center sm:ml-6">
             <a href="#" class="text-gray-500 hover:text-gray-900 cursor-pointer">Home</a>
-            <a href="#" class="text-gray-500 hover:text-gray-900 cursor-pointer ml-4">Products and Transactions</a>
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Products & Transactions</a>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="#">Products</a></li>
+                <li><a class="dropdown-item" href="#">Product Categories</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="#">Transaction History</a></li>
+                <li><a class="dropdown-item" href="{{route('payment-methods.index')}}">Payment Methods</a></li>
+            </ul>
             <a href="#" class="text-gray-500 hover:text-gray-900 cursor-pointer ml-4">Suppliers</a>
             <a href="#" class="text-gray-500 hover:text-gray-900 cursor-pointer ml-4">Employee</a>
             <a href="#" class="text-gray-500 hover:text-gray-900 cursor-pointer ml-4">Admin</a>

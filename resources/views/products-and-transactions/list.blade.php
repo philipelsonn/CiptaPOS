@@ -1,47 +1,76 @@
 <x-app-layout>
-    <div class="d-flex">
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
         <!-- Grid Product -->
-        <div style="flex: 1; padding-right: 10px;">
-            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem;">
-                @foreach($products as $product)
-                    <div class="product" data-product-id="{{ $product->id }}" style="cursor: pointer; background-color: #fff; padding: 1rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                        <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" style="width: 100%; height: 100px; object-fit: contain; border-radius: 0.25rem;">
-                        <h3 style="margin-top: 0.5rem; margin-bottom: 0.25rem; font-size: 1.25rem;">{{ $product->name }}</h3>
-                        <p style="margin-bottom: 0.5rem; font-size: 1rem;">{{ $product->description }}</p>
-                        <p id="product-price" style="margin-bottom: 0; font-size: 1rem; font-weight: bold;">Price: Rp {{ $product->price }}</p>
-                        <p id="product-price-discounted" style="margin-bottom: 0; font-size: 1rem; font-weight: bold;">Price: Rp {{ $product->price * (1 - ($product->discount / 100)) }}</p>
-                        <p class="stock" style="margin-bottom: 0; font-size: 1rem; font-weight: bold;">Stock: {{ $product->stock }}</p>
-                        <button class="add-to-cart" style="background-color: #3490dc; color: white; border: none; padding: 0.5rem 1rem; border-radius: 0.25rem; cursor: pointer; margin-top: 0.5rem;">Add</button>
-                    </div>
-                @endforeach
+        <div class="pl-5 pr-5 pt-3">
+            <div style="flex: 55; padding-right: 10px;">
+                <div>
+                    <form id="search-form" action="{{ route('product/search') }}" method="GET" class="d-flex">
+                        <div class="input-group flex-grow-1 mb-3" style="position: relative;">
+                            <input type="text" id="search-bar" name="q" autocomplete="off" class="form-control" placeholder="Search products">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-search"></i>
+                            </button>
+                            <div id="search-results" style="position: absolute; background-color: white; border: 1px solid #ccc; max-height: 200px; overflow-y: auto; display: none; width: 100%; top: 100%; left: 0;"></div>
+                        </div>
+                    </form>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem;">
+                    @foreach($products as $product)
+                        @if (request('q') === null || request('q') === '' || strpos(strtolower($product->name), strtolower(request('q'))) !== false)
+                            <div class="product" data-product-id="{{ $product->id }}" style="cursor: pointer; background-color: #fff; padding: 1rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                                <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" style="width: 100%; height: 100px; object-fit: contain; border-radius: 0.25rem;">
+                                <h3 style="margin-top: 0.5rem; margin-bottom: 0.25rem; font-size: 1.25rem;">{{ $product->name }}</h3>
+                                <p id="product-price-discounted" style="margin-bottom: 0; font-size: 1rem;">
+                                    @if ($product->discount > 0)
+                                        <del style="color: #6c757d;">Rp {{ $product->price }}</del><br>
+                                        <span style="font-weight: bold;">Rp {{ $product->price * (1 - ($product->discount / 100)) }}</span>
+                                    @else
+                                        <span style="font-weight: bold;">Rp {{ $product->price }} </span>
+                                    @endif
+                                </p>
+                                <p class="stock" style="margin-bottom: 0; font-size: 1rem; font-weight: bold;">Stock: {{ $product->stock }}</p>
+                                <button class="add-to-cart" style="background-color: #3490dc; color: white; border: none; padding: 0.5rem 1rem; border-radius: 0.25rem; cursor: pointer; margin-top: 0.5rem; width: 100%;">Add to cart</button>
+                            </div>
+                        @endif
+                    @endforeach
+                </div>
+                <div class="mt-5 mb-5">
+                    {{ $products->links() }}
             </div>
-            <div class="mt-4">
-                {{ $products->links() }}
             </div>
         </div>
+
         <!-- List Product -->
-        <div style="flex: 1;background-color: wheat">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Nama Barang</th>
-                        <th>Quantity</th>
-                        <th>Total Harga</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody id="selected-products"></tbody>
-            </table>
-        <div class="ml-5">
-            <label for="payment-method">Pilih Metode Pembayaran:</label>
-            <select name="payment-method" id="payment-method">
-                @foreach($paymentMethods as $paymentMethod)
-                    <option value="{{ $paymentMethod->id }}">{{ $paymentMethod->name }}</option>
-                @endforeach
-            </select>
-            <button id="clear-all-button" style="background-color: #dc3545; color: white; border: none; padding: 0.5rem 1rem; border-radius: 0.25rem; cursor: pointer; margin-top: 1rem;">Clear All</button>
-            <button id="checkout-button" style="background-color: #28a745; color: white; border: none; padding: 0.5rem 1rem; border-radius: 0.25rem; cursor: pointer; margin-top: 1rem;">Checkout</button>
+        <div style="background-color: white; display: flex; flex-direction: column; height: 850px; overflow-y: auto;">
+            <div style="display: flex; flex-direction: column; flex-grow: 1; overflow-y: auto;">
+                <table class="table" style="border-collapse: collapse; width: 100%; border: 1px solid #ddd;">
+                    <thead>
+                        <tr>
+                            <th style="border: 1px solid gray;">Nama Barang</th>
+                            <th style="border: 1px solid gray;">Quantity</th>
+                            <th style="border: 1px solid gray;">Total Harga</th>
+                            <th style="border: 1px solid gray; padding-left: 35px;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="selected-products">
+                        <!-- Isi tabel -->
+                    </tbody>
+                </table>
+            </div>
+            <div style="margin-left: 20px; width: fit-content;">
+                <label for="payment-method" style="margin-right: 10px;">Pilih Metode Pembayaran:</label>
+                <select name="payment-method" id="payment-method">
+                    @foreach($paymentMethods as $paymentMethod)
+                        <option value="{{ $paymentMethod->id }}">{{ $paymentMethod->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
+                <button id="clear-all-button" style="background-color: #dc3545; color: white; border: none; padding: 0.5rem 1rem; border-radius: 0.25rem; cursor: pointer; margin-right: 10px;">Clear All</button>
+                <button id="checkout-button" style="background-color: #28a745; color: white; border: none; padding: 0.5rem 1rem; border-radius: 0.25rem; cursor: pointer;">Checkout</button>
+            </div>
         </div>
+
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -52,131 +81,208 @@
             let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
             products.forEach(product => {
-            const addToCartButton = product.querySelector('.add-to-cart');
-            const productId = product.getAttribute('data-product-id');
-            const stock = parseInt(product.querySelector('.stock').textContent.replace('Stock: ', ''));
+                const addToCartButton = product.querySelector('.add-to-cart');
+                const productId = product.getAttribute('data-product-id');
+                const stock = parseInt(product.querySelector('.stock').textContent.replace('Stock: ', ''));
 
-            document.getElementById('clear-all-button').addEventListener('click', function() {
-                cart = [];
-                renderCart();
-                localStorage.removeItem('cart');
-            });
+                document.getElementById('clear-all-button').addEventListener('click', function() {
+                    cart = [];
+                    renderCart();
+                    localStorage.removeItem('cart');
+                });
 
-            addToCartButton.addEventListener('click', function() {
-                const existingProductIndex = cart.findIndex(item => item.id === productId);
+                addToCartButton.addEventListener('click', function() {
+                    const existingProductIndex = cart.findIndex(item => item.id === productId);
 
-                if (existingProductIndex !== -1) {
+                    if (existingProductIndex !== -1) {
                         // Product already in cart, increment quantity if below stock
-                    if (cart[existingProductIndex].quantity < cart[existingProductIndex].stock) {
+                        if (cart[existingProductIndex].quantity < cart[existingProductIndex].stock) {
                             cart[existingProductIndex].quantity++;
+                        } else {
+                            // Show alert if trying to add more than stock
+                            alert('Cannot add more. Stock limit reached.');
+                        }
                     } else {
-                        // Show alert if trying to add more than stock
-                        alert('Cannot add more. Stock limit reached.');
+                        // Product not in cart, add to cart with quantity default to 1
+                        const productName = product.querySelector('h3').textContent;
+                        const productPriceElement = product.querySelector('#product-price-discounted');
+                        const priceText = productPriceElement.innerText.trim();
+
+                        let productPrice;
+                        if (/^Rp \d+\nRp \d+$/.test(priceText)) {
+                            // Format: Rp 15000\nRp 14250
+                            productPrice = parseFloat(priceText.split('\n')[1].replace('Rp ', ''));
+                        } else if (/^Rp \d+$/.test(priceText)) {
+                            // Format: Rp 10000
+                            productPrice = parseFloat(priceText.replace('Rp ', ''));
+                        }
+
+                        cart.push({ id: productId, name: productName, price: productPrice, quantity: 1, stock: stock });
                     }
-                } else {
-                // Product not in cart, add to cart with quantity default to 1
-                    const productName = product.querySelector('h3').textContent;
-                    const productPrice = parseFloat(product.querySelector('#product-price-discounted').innerText.replace('Price: Rp ', ''));
-                    cart.push({ id: productId, name: productName, price: productPrice, quantity: 1, stock: stock });
-                }
 
-                renderCart();
-                localStorage.setItem('cart', JSON.stringify(cart));
-            });
-        });
-
-    function renderCart() {
-        selectedProducts.innerHTML = '';
-
-        cart.forEach(item => {
-            const tr = document.createElement('tr');
-            const tdName = document.createElement('td');
-            tdName.textContent = item.name;
-
-            const tdQuantity = document.createElement('td');
-            const inputQuantity = document.createElement('input');
-            inputQuantity.type = 'number';
-            inputQuantity.value = item.quantity;
-            inputQuantity.min = '1';
-            inputQuantity.max = item.stock; // Limit input to stock
-            inputQuantity.style.width = '60px';
-            inputQuantity.style.marginRight = '5px';
-            inputQuantity.addEventListener('change', function() {
-                const newValue = parseInt(inputQuantity.value);
-                if (newValue > item.stock) {
-                    // Jika nilai yang dimasukkan melebihi stok, atur nilai kembali ke stok
-                    inputQuantity.value = item.stock;
-                    item.quantity = item.stock;
-                    alert('Cannot add more. Stock limit reached.');
-                } else {
-                    // Jika nilai yang dimasukkan valid, atur kuantitas item dan update keranjang
-                    item.quantity = newValue;
                     renderCart();
                     localStorage.setItem('cart', JSON.stringify(cart));
-                }
+                });
             });
-            tdQuantity.appendChild(inputQuantity);
 
-            const tdTotal = document.createElement('td');
-            tdTotal.textContent = `Rp ${item.price * item.quantity}`;
+            function renderCart() {
+                selectedProducts.innerHTML = '';
 
-            const tdAction = document.createElement('td');
-            const cancelButton = document.createElement('button');
-            cancelButton.textContent = 'Cancel';
-            cancelButton.style.backgroundColor = '#dc3545'; // Merah
-            cancelButton.style.color = 'white';
-            cancelButton.style.border = 'none';
-            cancelButton.style.padding = '0.5rem 1rem';
-            cancelButton.style.borderRadius = '0.25rem';
-            cancelButton.style.cursor = 'pointer';
-            cancelButton.style.marginLeft = '1rem'; // Jarak dari teks
-            cancelButton.addEventListener('click', function() {
-                cart = cart.filter(cartItem => cartItem.id !== item.id);
-                renderCart();
-                localStorage.setItem('cart', JSON.stringify(cart));
+                cart.forEach(item => {
+                    const tr = document.createElement('tr');
+                    tr.style.borderBottom = '1px solid gray';
+                    const tdName = document.createElement('td');
+                    tdName.textContent = item.name;
+                    tdName.style.borderRight = '1px solid gray';
+
+                    const tdQuantity = document.createElement('td');
+                    const inputQuantity = document.createElement('input');
+                    tdQuantity.style.borderRight = '1px solid gray';
+                    inputQuantity.type = 'number';
+                    inputQuantity.value = item.quantity;
+                    inputQuantity.min = '1';
+                    inputQuantity.max = item.stock; // Limit input to stock
+                    inputQuantity.style.width = '60px';
+                    inputQuantity.addEventListener('change', function() {
+                        const newValue = parseInt(inputQuantity.value);
+                        if (newValue > item.stock) {
+                            // If input value exceeds stock, set value back to stock
+                            inputQuantity.value = item.stock;
+                            item.quantity = item.stock;
+                            alert('Cannot add more. Stock limit reached.');
+                        } else {
+                            // If input value is valid, set item quantity and update cart
+                            item.quantity = newValue;
+                            renderCart();
+                            localStorage.setItem('cart', JSON.stringify(cart));
+                        }
+                    });
+                    tdQuantity.appendChild(inputQuantity);
+
+                    const tdTotal = document.createElement('td');
+                    tdTotal.textContent = `Rp ${item.price * item.quantity}`;
+                    tdTotal.style.borderRight = '1px solid gray';
+
+
+                    const tdAction = document.createElement('td');
+                    const cancelButton = document.createElement('button');
+                    cancelButton.textContent = 'Cancel';
+                    cancelButton.style.backgroundColor = '#dc3545'; // Red
+                    cancelButton.style.color = 'white';
+                    cancelButton.style.border = 'none';
+                    cancelButton.style.padding = '0.5rem 1rem';
+                    cancelButton.style.borderRadius = '0.25rem';
+                    cancelButton.style.cursor = 'pointer';
+                    cancelButton.style.marginLeft = '1rem'; // Spacing from text
+                    cancelButton.addEventListener('click', function() {
+                        cart = cart.filter(cartItem => cartItem.id !== item.id);
+                        renderCart();
+                        localStorage.setItem('cart', JSON.stringify(cart));
+                    });
+                    tdAction.appendChild(cancelButton);
+
+                    tr.appendChild(tdName);
+                    tr.appendChild(tdQuantity);
+                    tr.appendChild(tdTotal);
+                    tr.appendChild(tdAction);
+
+                    selectedProducts.appendChild(tr);
+                });
+            }
+
+            // Render cart on page load
+            renderCart();
+            document.getElementById('checkout-button').addEventListener('click', function() {
+                const paymentMethodId = document.getElementById('payment-method').value;
+
+                // Send shopping cart data and payment method ID to route /transaction
+                fetch('{{ route("transactions.store") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        cart: cart,
+                        payment_method_id: paymentMethodId
+                    })
+                })
+                .then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    }
+                    throw new Error('Network response was not ok.');
+                })
+                .then(data => {
+                    console.log(data);
+                    localStorage.removeItem('cart');
+                    window.location.href = '/transactions';
+                })
+                .catch(error => {
+                    console.error('There has been a problem with your fetch operation:', error);
+                });
             });
-            tdAction.appendChild(cancelButton);
-
-            tr.appendChild(tdName);
-            tr.appendChild(tdQuantity);
-            tr.appendChild(tdTotal);
-            tr.appendChild(tdAction);
-
-            selectedProducts.appendChild(tr);
         });
+
+    document.addEventListener('DOMContentLoaded', function() {
+    const searchBar = document.getElementById('search-bar');
+    const searchResults = document.getElementById('search-results');
+
+    searchBar.addEventListener('input', function() {
+        const query = searchBar.value.trim();
+
+        if (query === '') {
+            searchResults.style.display = 'none';
+            return;
+        }
+
+        fetch(`/search?q=${query}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Render search results
+                renderSearchResults(data);
+            })
+            .catch(error => {
+                console.error('There has been a problem with your fetch operation:', error);
+            });
+    });
+
+    function renderSearchResults(results) {
+        searchResults.innerHTML = '';
+
+        if (results.length === 0) {
+            searchResults.style.display = 'none';
+            return;
+        }
+
+        results.forEach(result => {
+            const div = document.createElement('div');
+            div.textContent = result.name;
+            div.style.padding = '5px';
+            div.style.cursor = 'pointer';
+            div.addEventListener('click', function() {
+                // Set selected search result to search bar
+                searchBar.value = result.name;
+                searchResults.style.display = 'none';
+
+                // You can also add logic to handle the selection
+            });
+            searchResults.appendChild(div);
+        });
+
+        searchResults.style.display = 'block';
     }
 
-    // Render cart on page load
-    renderCart();
-    document.getElementById('checkout-button').addEventListener('click', function() {
-        const paymentMethodId = document.getElementById('payment-method').value;
-
-        // Kirim data keranjang belanja dan ID metode pembayaran ke route /transaction
-        fetch('{{ route("transactions.store") }}', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            },
-            body: JSON.stringify({
-                cart: cart,
-                payment_method_id: paymentMethodId
-            })
-        })
-        .then(response => {
-            if (response.ok) {
-                return response.json();
-            }
-            throw new Error('Network response was not ok.');
-        })
-        .then(data => {
-            console.log(data);
-            localStorage.removeItem('cart');
-            window.location.href = '/transactions';
-        })
-        .catch(error => {
-            console.error('There has been a problem with your fetch operation:', error);
-        });
+    // Close search results when clicking outside
+    document.addEventListener('click', function(event) {
+        if (!searchResults.contains(event.target) && event.target !== searchBar) {
+            searchResults.style.display = 'none';
+        }
     });
 });
 
