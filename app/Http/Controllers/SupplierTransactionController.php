@@ -55,6 +55,10 @@ class SupplierTransactionController extends Controller
      */
     public function destroy(SupplierTransaction $supplierTransaction)
     {
+        $product = Product::findOrFail($supplierTransaction->supplierPricing->product_id);
+        $product->stock -= $supplierTransaction->quantity;
+        $product->save();
+
         $supplierTransaction->delete();
 
         return redirect()->route("supplier-transactions.index");

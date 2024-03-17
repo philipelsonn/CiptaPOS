@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('image');
             $table->unsignedBigInteger('category_id');
             $table->foreign('category_id')->references('id')->on('product_categories')->onUpdate('cascade')->onDelete('cascade');
-            $table->integer('stock');
+            $table->integer('stock')->default(0);
             $table->integer('discount');
             $table->timestamps();
         });
