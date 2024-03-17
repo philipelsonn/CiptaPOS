@@ -18,8 +18,8 @@
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 Products & Transactions</a>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="#">Products</a></li>
-                                <li><a class="dropdown-item" href="#">Product Categories</a></li>
+                                <li><a class="dropdown-item" href="{{route('products.index')}}">Products</a></li>
+                                <li><a class="dropdown-item" href="{{route('product-categories.index')}}">Product Categories</a></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="#">Transaction History</a></li>
                                 <li><a class="dropdown-item" href="{{route('payment-methods.index')}}">Payment Methods</a></li>
@@ -29,13 +29,13 @@
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 Suppliers</a>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="#">Suppliers</a></li>
-                                <li><a class="dropdown-item" href="#">Supplier Transactions</a></li>
-                                <li><a class="dropdown-item" href="#">Supplier Pricings</a></li>
+                                <li><a class="dropdown-item" href="{{route('suppliers.index')}}">Suppliers</a></li>
+                                <li><a class="dropdown-item" href="{{route('supplier-transactions.index')}}">Supplier Transactions</a></li>
+                                <li><a class="dropdown-item" href="{{route('supplier-pricings.index')}}">Supplier Pricings</a></li>
                             </ul>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" aria-current="page" href="#">Employees</a>
+                            <a class="nav-link" aria-current="page" href="{{route('employees.index')}}">Employees</a>
                         </li>
                     </ul>
                 </div>

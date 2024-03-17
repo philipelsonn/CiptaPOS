@@ -40,15 +40,11 @@ Route::middleware('auth')->group(function () {
     Route::post('register', [RegisteredUserController::class, 'store'])->name('employee.add');
 });
 
-Route::get('/employee', function () {
-    return view('employee.employeelist');
-})->middleware(['auth', 'verified'])->name('employee');
-
 Route::post('employee', [RegisteredUserController::class, 'destroy'])->name('employees.destroy');
 
 Route::post('/transaction', [TransactionController::class, 'store'])->name('transaction.store');
 
-Route::get('/employees', [ProfileController::class, 'index'])->middleware(['auth', 'verified'])->name('employee.index');
+Route::get('/employees', [ProfileController::class, 'index'])->middleware(['auth', 'verified'])->name('employees.index');
 
 Route::resource('payment-methods', PaymentMethodController::class)->except([
     'create', 'edit', 'show'
