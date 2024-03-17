@@ -7,6 +7,9 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\SupplierPricingController;
+use App\Http\Controllers\SupplierTransactionController;
 
 
 /*
@@ -34,24 +37,38 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::post('register', [RegisteredUserController::class, 'store'])->name('employee.add');
 });
+
 Route::get('/employee', function () {
     return view('employee.employeelist');
 })->middleware(['auth', 'verified'])->name('employee');
+
+Route::post('employee', [RegisteredUserController::class, 'destroy'])->name('employees.destroy');
 
 Route::post('/transaction', [TransactionController::class, 'store'])->name('transaction.store');
 
 Route::get('/employees', [ProfileController::class, 'index'])->middleware(['auth', 'verified'])->name('employee.index');
 
-
-
-Route::resource('payment-methods',PaymentMethodController::class)->except([
-    'create', 'edit', 'show'
-]);
-Route::resource('product-categories',ProductCategoryController::class)->except([
+Route::resource('payment-methods', PaymentMethodController::class)->except([
     'create', 'edit', 'show'
 ]);
 
-Route::resource('products',ProductController::class)->except([
+Route::resource('product-categories', ProductCategoryController::class)->except([
+    'create', 'edit', 'show'
+]);
+
+Route::resource('products', ProductController::class)->except([
+    'create', 'edit', 'show'
+]);
+
+Route::resource('suppliers', SupplierController::class)->except([
+    'create', 'edit', 'show'
+]);
+
+Route::resource('supplier-pricings', SupplierPricingController::class)->except([
+    'create', 'edit', 'show'
+]);
+
+Route::resource('supplier-transactions', SupplierTransactionController::class)->except([
     'create', 'edit', 'show'
 ]);
 

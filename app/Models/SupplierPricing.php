@@ -17,12 +17,12 @@ class SupplierPricing extends Model
 
     public function product(): HasOne
     {
-        return $this->hasOne(Product::class);
+        return $this->hasOne(Product::class, 'id', 'product_id');
     }
 
     public function supplier(): BelongsTo
     {
-        return $this->belongsTo(Supplier::class);
+        return $this->belongsTo(Supplier::class, 'supplier_id', 'id');
     }
 
     public function supplierTransaction(): BelongsTo

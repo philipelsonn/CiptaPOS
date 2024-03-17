@@ -16,6 +16,6 @@ class SupplierTransaction extends Model
 
     public function supplierPricing(): HasOne
     {
-        return $this->hasOne(SupplierPricing::class);
+        return $this->hasOne(SupplierPricing::class, 'id', 'supplier_price_id');
     }
 }

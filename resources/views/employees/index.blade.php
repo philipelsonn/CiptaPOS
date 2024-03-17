@@ -38,13 +38,13 @@
                                     <div class="d-flex">
                                         {{-- <a class="btn btn-sm btn-warning me-2" data-bs-toggle="modal" data-bs-target="#update{{$employee->id}}">
                                             <i class='far fa-edit'></i></a> --}}
-                                        {{-- <form action="{{ route('employees.destroy', $employee->id) }}" method="POST">
+                                        <form action="{{ route('employees.destroy', $employee->id) }}" method="POST">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn btn-sm btn-danger"
                                                 onclick="return confirm('Are you sure you want to permanently delete the data?')">
                                                 <i class='far fa-trash-alt'></i></button>
-                                        </form> --}}
+                                        </form>
                                     </div>
                                 </td>
                             </tr>
