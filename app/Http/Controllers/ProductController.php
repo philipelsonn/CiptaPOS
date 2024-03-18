@@ -31,7 +31,6 @@ class ProductController extends Controller
             'description' => 'required|string',
             'image' => 'image|required|mimes:jpg,png,jpeg',
             'category_id' => 'required|integer',
-            'stock' => 'required|integer',
             'discount' => 'required|integer|max:100',
         ]);
 
@@ -47,7 +46,6 @@ class ProductController extends Controller
             'description' => $request->description,
             'image' => $file_name,
             'category_id' => $request->category_id,
-            'stock' => $request->stock,
             'discount' => $request->discount,
         ]);
 
@@ -65,7 +63,6 @@ class ProductController extends Controller
             'description' => 'required|string',
             'image_new' => 'image|required|mimes:jpg,png,jpeg',
             'category_id' => 'required|integer',
-            'stock' => 'required|integer',
             'discount' => 'required|integer|max:100',
         ]);
 
@@ -83,7 +80,6 @@ class ProductController extends Controller
             'description' => $request->description,
             'image' => $file_name,
             'category_id' => $request->category_id,
-            'stock' => $request->stock,
             'discount' => $request->discount,
         ]);
 

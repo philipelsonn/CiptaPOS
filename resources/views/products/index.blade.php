@@ -105,10 +105,6 @@
                                 </select>
                             </div>
                             <div class="mb-3">
-                                <label for="stock" class="form-label">{{ __('Stock') }}</label>
-                                <input id="stock" class="form-control" type="number" name="stock" value="{{ $product->stock }}">
-                            </div>  
-                            <div class="mb-3">
                                 <label for="discount" class="form-label">{{ __('Discount') }}</label>
                                 <input id="discount" class="form-control" type="number" name="discount" value="{{ $product->discount }}">
                             </div>                       
@@ -160,11 +156,7 @@
                                     </option>
                                 @endforeach
                             </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="stock" class="form-label">{{ __('Stock') }}</label>
-                            <input id="stock" class="form-control" type="number" name="stock" value="{{ old('stock') }} "required>
-                        </div>  
+                        </div> 
                         <div class="mb-3">
                             <label for="discount" class="form-label">{{ __('Discount') }}</label>
                             <input id="discount" class="form-control" type="number" name="discount" value="{{ old('discount') }} "required>
