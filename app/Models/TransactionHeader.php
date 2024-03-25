@@ -20,16 +20,15 @@ class TransactionHeader extends Model
 
     public function paymentMethod(): HasOne
     {
-        return $this->hasOne(PaymentMethod::class);
+        return $this->hasOne(PaymentMethod::class, 'id', 'payment_method_id');
     }
-
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'cashier_id', 'id');
     }
 
-    public function transactionDetail(): HasMany
+    public function transactionDetails()
     {
-        return $this->hasMany(TransactionDetail::class);
+        return $this->hasMany(TransactionDetail::class, 'transaction_header_id');
     }
 }
