@@ -21,7 +21,7 @@
                                 <li><a class="dropdown-item" href="{{route('products.index')}}">Products</a></li>
                                 <li><a class="dropdown-item" href="{{route('product-categories.index')}}">Product Categories</a></li>
                                 <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="#">Transaction History</a></li>
+                                <li><a class="dropdown-item" href="{{route('transactions.history') }}">Transaction History</a></li>
                                 <li><a class="dropdown-item" href="{{route('payment-methods.index')}}">Payment Methods</a></li>
                             </ul>
                         </li>

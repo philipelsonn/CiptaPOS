@@ -7,6 +7,8 @@ use App\Models\TransactionHeader;
 use App\Models\TransactionDetail;
 use App\Models\Product;
 use App\Models\PaymentMethod;
+use Illuminate\Support\Facades\DB;
+
 
 class TransactionController extends Controller
 {
@@ -15,6 +17,25 @@ class TransactionController extends Controller
         $products = Product::paginate(5); // Menampilkan 10 produk per halaman
         $paymentMethods = PaymentMethod::all();
         return view('products-and-transactions.list', compact('products', 'paymentMethods'));
+    }
+
+    public function showHistory()
+    {
+        $transactionHeaders = TransactionHeader::all();
+        $transactionDetails = TransactionDetail::all();
+        $totalRevenue = $transactionDetails->sum(function ($transactionDetail) {
+            return $transactionDetail->price * $transactionDetail->quantity;
+        });
+        $mostSoldProducts = TransactionDetail::select('product_id', DB::raw('SUM(quantity) as total_quantity'))
+        ->whereHas('transactionHeader', function ($query) {
+            $query->where('transaction_date', '>=', now()->subMonth()->startOfMonth())
+                ->where('transaction_date', '<=', now()->endOfMonth());
+        })
+        ->groupBy('product_id')
+        ->orderByDesc('total_quantity')
+        ->limit(3) // Limit to top 3 products
+        ->get();
+        return view('products-and-transactions.transactionHistory',compact('transactionHeaders', 'transactionDetails', 'totalRevenue', 'mostSoldProducts'));
     }
 
     public function store(Request $request)
@@ -46,5 +67,10 @@ class TransactionController extends Controller
         $request->session()->forget('cart');
 
         return response()->json(['message' => 'Transaction created successfully']);
+    }
+    public function destroy(TransactionDetail $transactionDetail)
+    {
+        $transactionDetail->delete();
+        return redirect()->route("transactions/history");
     }
 }

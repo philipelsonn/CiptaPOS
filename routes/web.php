@@ -74,6 +74,10 @@ Route::post('/transactions', [TransactionController::class, 'store'])->name('tra
 
 Route::get('transactions', [TransactionController::class, 'index']);
 
+Route::get('transactions/history', [TransactionController::class, 'showHistory'])->name('transactions.history');
+Route::delete('transactions/history', [TransactionController::class, 'destroy']);
+
+
 Route::resource('/stockout',StockoutController::class)->except([
     'create', 'edit', 'show'
 ]);
