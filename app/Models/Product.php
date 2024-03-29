@@ -21,9 +21,9 @@ class Product extends Model
         return $this->hasOne(ProductCategory::class, 'id', 'category_id');
     }
 
-    public function transactionDetails(): HasMany
+    public function transactionDetail(): BelongsTo
     {
-        return $this->hasMany(TransactionDetail::class, 'product_id');
+        return $this->belongsTo(TransactionDetail::class, 'product_id', 'id');
     }
 
     public function supplierPricing(): BelongsTo

@@ -33,9 +33,24 @@ class TransactionController extends Controller
         })
         ->groupBy('product_id')
         ->orderByDesc('total_quantity')
-        ->limit(3) // Limit to top 3 products
+        ->limit(5) // Limit produk
         ->get();
-        return view('products-and-transactions.transactionHistory',compact('transactionHeaders', 'transactionDetails', 'totalRevenue', 'mostSoldProducts'));
+
+        $mostSoldCategories = TransactionDetail::select('product_categories.name as category', DB::raw('SUM(transaction_details.quantity) as total_quantity'))
+        ->join('products', 'transaction_details.product_id', '=', 'products.id')
+        ->join('product_categories', 'products.category_id', '=', 'product_categories.id')
+        ->whereHas('transactionHeader', function ($query) {
+        $query->where('transaction_date', '>=', now()->subMonth()->startOfMonth())
+        ->where('transaction_date', '<=', now()->endOfMonth());
+        })
+        ->groupBy('product_categories.name')
+        ->orderByDesc('total_quantity')
+        ->get();
+
+
+
+        $transactionDetailsTop5 = TransactionDetail::orderByDesc(DB::raw('price * quantity'))->take(5)->get();
+        return view('products-and-transactions.transactionHistory',compact('transactionHeaders', 'transactionDetails', 'totalRevenue', 'mostSoldProducts', 'transactionDetailsTop5', 'mostSoldCategories'));
     }
 
     public function store(Request $request)
