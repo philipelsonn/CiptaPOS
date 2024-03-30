@@ -15,13 +15,13 @@ class TransactionDetail extends Model
     protected $timestamp = true;
     protected $guarded = [];
 
-    public function product(): BelongsTo
+    public function product(): HasOne
     {
-        return $this->BelongsTo(Product::class);
+        return $this->hasOne(Product::class, 'id', 'product_id');
     }
 
     public function transactionHeader(): BelongsTo
     {
-        return $this->belongsTo(TransactionHeader::class, 'transaction_header_id');
+        return $this->belongsTo(transactionHeader::class, 'transaction_header_id', 'id');
     }
 }

@@ -5,7 +5,7 @@
             <div class="container-fluid">
                 <!-- Logo di pojok kiri -->
                 <a class="navbar-brand" href="#">
-                    <img src="{{ asset('storage/image/ciptapOSlogo.png') }}" class="img-fluid" alt="CiptaPOSLogo" style="max-height: 40px;">
+                    <img src="{{ asset('storage/image/ciptaposlogoonly.png') }}" class="img-fluid" alt="CiptaPOSLogo" style="max-height: 40px;">
                 </a>
 
                 <!-- Menu Navbar di tengah -->
