@@ -7,6 +7,7 @@ use App\Models\TransactionHeader;
 use App\Models\TransactionDetail;
 use App\Models\Product;
 use App\Models\PaymentMethod;
+use App\Models\ProductCategory;
 use Illuminate\Support\Facades\DB;
 
 
@@ -16,7 +17,9 @@ class TransactionController extends Controller
     {
         $products = Product::paginate(5); // Menampilkan 10 produk per halaman
         $paymentMethods = PaymentMethod::all();
-        return view('products-and-transactions.list', compact('products', 'paymentMethods'));
+        $productCategories = ProductCategory::all();
+        $selectedCategory = 'All Category';
+        return view('products-and-transactions.list', compact('products', 'paymentMethods', 'productCategories', 'selectedCategory'));
     }
 
     public function showHistory()

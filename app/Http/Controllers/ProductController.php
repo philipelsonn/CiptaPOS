@@ -110,4 +110,20 @@ class ProductController extends Controller
         return view('products-and-transactions.list', compact('products', 'paymentMethods'));
     }
 
+    public function getByCategory(Request $request)
+    {
+        $categoryId = $request->input('category_id');
+        if (empty($categoryId)) {
+            $products = Product::paginate(5); // Ambil semua produk jika kategori kosong
+        } else {
+            $products = Product::where('category_id', $categoryId)->paginate(5); // Ambil produk berdasarkan kategori
+        }
+        $category = ProductCategory::find($categoryId);
+        $selectedCategory = $category ? $category->name : 'All Categories';
+        $paymentMethods = PaymentMethod::all();
+        $productCategories = ProductCategory::all();
+        return view('products-and-transactions.list', compact('products', 'paymentMethods', 'productCategories', 'selectedCategory'));
+    }
+
+
 }

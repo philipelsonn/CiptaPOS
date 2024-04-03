@@ -33,7 +33,7 @@ class SupplierTransactionController extends Controller
             'supplier_id' => 'required|integer',
             'quantity' => 'required|integer',
         ]);
- 
+
         $supplierPricing = SupplierPricing::where('supplier_id', $request->supplier_id)
                             ->where('product_id', $request->product_id)->first();
 
