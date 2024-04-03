@@ -91,6 +91,9 @@ Route::get('/search', function () {
 });
 Route::get('/product/search', [ProductController::class, 'search'])->name('product/search');
 
+Route::get('/products/by_category', [ProductController::class, 'getByCategory'])->name('products.by_category');
+
+
 
 
 
