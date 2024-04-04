@@ -81,23 +81,23 @@
                             <div class="mb-3">
                                 <label for="description" class="form-label">{{ __('Description') }}</label>
                                 <input id="description" class="form-control" type="text" name="description" value="{{ $product->description }}">
-                            </div>      
+                            </div>
                             <div class="mb-3">
                                 <label for="image" class="col-md-3 col-form-label text-sm-left fw-bold">{{_('Image')}}</label>
                                 <input type="file" id="image_new" name="image_new" class="form-control">
                                 <input class="form-control rounded-pill" type="text" id="image_old"
                                     name="image_old" value="{{ $product->image }}" hidden>
-                            </div>      
+                            </div>
                             <div class="mb-3">
                                 <label for="price" class="form-label">{{ __('Price') }}</label>
                                 <input id="price" class="form-control" type="number" name="price" value="{{ $product->price }}">
-                            </div>   
+                            </div>
                             <div class="mb-3">
                                 <label for="category_id" class="form-label">{{ __('Category') }}</label>
                                 <select id="category_id" name="category_id" class="form-select">
                                     <option value="Select" selected disabled>Select Product Category</option>
                                     @foreach ($productCategories as $productCategory)
-                                        <option value={{$productCategory->id}} 
+                                        <option value={{$productCategory->id}}
                                             @if ($product->category_id == $productCategory->id) selected @endif>
                                             {{ $productCategory->name }}
                                         </option>
@@ -107,7 +107,7 @@
                             <div class="mb-3">
                                 <label for="discount" class="form-label">{{ __('Discount') }}</label>
                                 <input id="discount" class="form-control" type="number" name="discount" value="{{ $product->discount }}">
-                            </div>                       
+                            </div>
                         </div>
                         <div class="modal-footer">
                             @method('PUT')
@@ -120,53 +120,106 @@
     @endforeach
 
     <div class="modal" id="addProduct" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">Add Product</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form action="{{route('products.store')}}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="name" class="form-label">{{ __('Name') }}</label>
-                            <input id="name" class="form-control" type="text" name="name" value="{{ old('name') }}" required>
+                    <div class="d-flex justify-content-between">
+                        <div style="width: 48%;">
+                            <div class="modal-body">
+                                <!-- Basic Info Fields -->
+                                <div class="mb-3">
+                                    <label for="name" class="form-label">{{ __('Name') }}</label>
+                                    <input id="name" class="form-control" type="text" name="name" value="{{ old('name') }}" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="description" class="form-label">{{ __('Description') }}</label>
+                                    <input id="description" class="form-control" type="text" name="description" value="{{ old('description') }} " required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="image" class="form-label">{{ __('Image') }}</label>
+                                    <input type="file" id="image" name="image" class="form-control" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="category_id" class="form-label">{{ __('Category') }}</label>
+                                    <select id="category_id" name="category_id" class="form-select" required>
+                                        <option value="Select" selected disabled>Select Product Category</option>
+                                        @foreach ($productCategories as $productCategory)
+                                            <option value={{$productCategory->id}}
+                                                @if (old('category_id') == $productCategory->id) selected @endif>
+                                                {{ $productCategory->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="discount" class="form-label">{{ __('Discount') }}</label>
+                                    <input id="discount" class="form-control" type="number" name="discount" value="{{ old('discount') ? trim(old('discount')) : '' }}" required>
+                                </div>
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label for="description" class="form-label">{{ __('Description') }}</label>
-                            <input id="description" class="form-control" type="text" name="description" value="{{ old('description') }} "required>
-                        </div>      
-                        <div class="mb-3">
-                            <label for="image" class="form-label">{{ __('Image') }}</label>
-                            <input type="file" id="image" name="image" class="form-control" required>
-                        </div>      
-                        <div class="mb-3">
-                            <label for="price" class="form-label">{{ __('Price') }}</label>
-                            <input id="price" class="form-control" type="number" name="price" value="{{ old('price') }} "required>
-                        </div>   
-                        <div class="mb-3">
-                            <label for="category_id" class="form-label">{{ __('Category') }}</label>
-                            <select id="category_id" name="category_id" class="form-select" required>
-                                <option value="Select" selected disabled>Select Product Category</option>
-                                @foreach ($productCategories as $productCategory)
-                                    <option value={{$productCategory->id}} 
-                                        @if (old('category_id') == $productCategory->id) selected @endif>
-                                        {{ $productCategory->name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div> 
-                        <div class="mb-3">
-                            <label for="discount" class="form-label">{{ __('Discount') }}</label>
-                            <input id="discount" class="form-control" type="number" name="discount" value="{{ old('discount') }} "required>
-                        </div>  
+                        <div style="width: 48%;">
+                            <div class="modal-body">
+                                <!-- Pricing Fields -->
+                                <div class="mb-3">
+                                    <label for="price" class="form-label">{{ __('Price') }}</label>
+                                    <input id="price" class="form-control" type="number" name="price" value="{{ old('price') ? trim(old('price')) : '' }}" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="initial_stock" class="form-label">{{ __('Initial Stock') }}</label>
+                                    <input id="initial_stock" class="form-control" type="number" name="initial_stock" value="{{ old('initial_stock') ? trim(old('initial_stock')) : '' }}" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="supplier_id" class="form-label">{{ __('Supplier') }}</label>
+                                    <select id="supplier_id" name="supplier_id" class="form-select" required>
+                                        <option value="" selected disabled>Select Supplier</option>
+                                        @foreach ($suppliers as $supplier)
+                                            <option value="{{ $supplier->id }}" {{ old('supplier_id') == $supplier->id ? 'selected' : '' }}>
+                                                {{ $supplier->company_name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="price_per_piece" class="form-label">{{ __('Price per Piece') }}</label>
+                                    <input id="price_per_piece" class="form-control" type="number" name="price_per_piece" value="{{ old('price_per_piece') ? trim(old('price_per_piece')) : '' }}" required>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary">{{ __('Submit') }}</button>
+                    <div class="modal-footer d-flex justify-content-center">
+                        <button type="submit" class="btn btn-primary w-50">Submit</button>
                     </div>
                 </form>
+
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('input[type="number"]').forEach(function(input) {
+                input.addEventListener('change', function() {
+                    // Menghapus spasi dari nilai input
+                    this.value = this.value.trim();
+                });
+            });
+        });
+        document.addEventListener('DOMContentLoaded', function () {
+            @if(session('success'))
+                Toastify({
+                    text: "{{ session('success') }}",
+                    duration: 3000,  // set duration to 0 to make the toast sticky
+                    close: true,
+                    gravity: "bottom",
+                    position: "right",
+                    backgroundColor: "#3da25c",
+                }).showToast();
+            @endif
+        });
+    </script>
 @endsection

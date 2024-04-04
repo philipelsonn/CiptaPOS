@@ -19,6 +19,7 @@
                             <th class="col-md-9 align-middle">Product</th>
                             <th class="col-md-9 align-middle">Supplier</th>
                             <th class="col-md-9 align-middle">Quantity</th>
+                            <th class="col-md-9 align-middle">Price</th>
                             <th class="col-md-9 align-middle">Total Price</th>
                             <th class="col-md-9 align-middle">Transaction Date</th>
                             <th class="col-md-2 align-middle">Action</th>
@@ -32,7 +33,8 @@
                                 <td class="align-middle">{{ $supplierTransaction->supplierPricing->product->name }}</td>
                                 <td class="align-middle">{{ $supplierTransaction->supplierPricing->supplier->company_name }}</td>
                                 <td class="align-middle">{{ $supplierTransaction->quantity }}</td>
-                                <td class="align-middle">{{ $supplierTransaction->supplierPricing->price * $supplierTransaction->quantity }}</td>
+                                <td class="align-middle">{{ $supplierTransaction->price }}</td>
+                                <td class="align-middle">{{ $supplierTransaction->price * $supplierTransaction->quantity }}</td>
                                 <td class="align-middle">{{ $supplierTransaction->transaction_date }}</td>
                                 <td class="align-middle">
                                     <div class="d-flex">
@@ -69,7 +71,7 @@
                             <select id="product_id" name="product_id" class="form-select">
                                 <option value="Select" selected disabled>Select Product</option>
                                 @foreach ($products as $product)
-                                    <option value={{$product->id}} 
+                                    <option value={{$product->id}}
                                         @if (old('product_id') == $product->id) selected @endif>
                                         {{ $product->name }}
                                     </option>
@@ -81,7 +83,7 @@
                             <select id="supplier_id" name="supplier_id" class="form-select">
                                 <option value="Select" selected disabled>Select Supplier</option>
                                 @foreach ($suppliers as $supplier)
-                                    <option value={{$supplier->id}} 
+                                    <option value={{$supplier->id}}
                                         @if (old('supplier_id') == $supplier->id) selected @endif>
                                         {{ $supplier->company_name }}
                                     </option>
@@ -91,7 +93,7 @@
                         <div class="mb-3">
                             <label for="quantity" class="form-label">{{ __('Quantity') }}</label>
                             <input id="quantity" class="form-control" type="number" name="quantity" value="{{ old('quantity') }}" required>
-                        </div>  
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-primary">{{ __('Submit') }}</button>
