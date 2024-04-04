@@ -39,6 +39,7 @@ class SupplierTransactionController extends Controller
 
         SupplierTransaction::create([
             'supplier_price_id' => $supplierPricing->id,
+            'price' => $supplierPricing->price,
             'quantity' => $request->quantity,
             'transaction_date' => now()
         ]);

@@ -16,6 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('supplier_price_id');
             $table->foreign('supplier_price_id')->references('id')->on('supplier_pricings')->onUpdate('cascade')->onDelete('cascade');
             $table->integer('quantity');
+            $table->integer('price');
             $table->timestamp('transaction_date');
             $table->timestamps();
         });

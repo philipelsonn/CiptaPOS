@@ -5,7 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\PaymentMethod;
 use App\Models\Product;
 use App\Models\ProductCategory;
+use App\Models\Supplier;
+use App\Models\SupplierPricing;
+use App\Models\SupplierTransaction;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+
 
 class ProductController extends Controller
 {
@@ -16,7 +21,8 @@ class ProductController extends Controller
     {
         return view('products.index',[
             'products' => Product::all(),
-            'productCategories' => ProductCategory::all()
+            'productCategories' => ProductCategory::all(),
+            'suppliers' => Supplier::all()
         ]);
     }
 
@@ -25,31 +31,45 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
+        $request->validate( [
             'name' => 'required|string',
             'price' => 'required|integer',
             'description' => 'required|string',
             'image' => 'image|required|mimes:jpg,png,jpeg',
             'category_id' => 'required|integer',
             'discount' => 'required|integer|max:100',
+            'initial_stock' => 'required|integer|min:1',
+            'price_per_piece'=> 'required|integer',
         ]);
-
         if ($request->hasFile('image')) {
             $extension = $request->file('image')->getClientOriginalExtension();
             $file_name = $request->name . time() . '.' . $extension;
             $request->file('image')->storeAs('public/images/product', $file_name);
         }
 
-        Product::create([
+        $product = Product::create([
             'name' => $request->name,
             'price' => $request->price,
             'description' => $request->description,
+            'stock' => $request->initial_stock,
             'image' => $file_name,
             'category_id' => $request->category_id,
             'discount' => $request->discount,
         ]);
-
-        return redirect()->route("products.index");
+        $product->refresh();
+        $supplierPricing = SupplierPricing::create([
+            'product_id' => $product->id,
+            'supplier_id' => $request->supplier_id,
+            'price' => $request->price_per_piece,
+        ]);
+        $supplierPricing->refresh();
+        SupplierTransaction::create([
+            'supplier_price_id' => $supplierPricing->id,
+            'quantity' => $request->initial_stock,
+            'price' => $request->price_per_piece,
+            'transaction_date' => now(),
+        ]);
+        return redirect()->route("products.index")->with(['success' => 'Product added successfully', 'action' => 'add']);
     }
 
     /**
@@ -83,7 +103,7 @@ class ProductController extends Controller
             'discount' => $request->discount,
         ]);
 
-        return redirect()->route('products.index');
+        return redirect()->route("products.index")->with(['success' => 'Product edited successfully', 'action' => 'edit']);
     }
 
     /**
@@ -93,7 +113,7 @@ class ProductController extends Controller
     {
         $product->delete();
 
-        return redirect()->route("products.index");
+        return redirect()->route("products.index")->with(['success' => 'Product deleted successfully', 'action' => 'delete']);
     }
     public function search(Request $request)
     {
