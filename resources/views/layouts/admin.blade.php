@@ -14,13 +14,27 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <style>
+        .columnformats{
+            text-align: left !important;
+            padding-left: 2vw !important;
+        }
+
+    </style>
 </head>
 <body class="d-flex flex-column min-vh-100 bg-light bg-opacity-25">
     @yield('content')
     <script src="//cdn.datatables.net/2.0.1/js/dataTables.min.js"></script>
     <script>
         $(document).ready( function () {
-            $('#myTable').DataTable();
+            $('#myTable thead th').addClass('columnformats');
+            $('#myTable').DataTable({
+                columnDefs: [
+                    {className: "columnformats", targets: "_all"},
+                    {orderable: false, targets: -1 }
+            ]
+            });
+
         } );
     </script>
 </body>
