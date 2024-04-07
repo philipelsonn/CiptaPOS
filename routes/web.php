@@ -74,6 +74,8 @@ Route::post('/transactions', [TransactionController::class, 'store'])->name('tra
 
 Route::get('transactions', [TransactionController::class, 'index']);
 
+Route::get('/product-transactions/receipt/{id}',  [TransactionController::class, 'showReceipt'])->name('product.transactions.receipt');
+
 Route::get('transactions/history', [TransactionController::class, 'showHistory'])->name('transactions.history');
 Route::delete('transactions/history', [TransactionController::class, 'destroy']);
 
