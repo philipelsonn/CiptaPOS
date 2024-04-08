@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'CiptaPOS | Manage Supplier Transactions')
+@section('title', 'CiptaPOS | Transactions')
 
 @section('content')
     @include('layouts.navbar')
@@ -73,9 +73,9 @@
                 <table class="table" style="border-collapse: collapse; width: 100%; border: 1px solid #ddd;">
                     <thead>
                         <tr>
-                            <th style="border: 1px solid gray;">Nama Barang</th>
+                            <th style="border: 1px solid gray;">Product</th>
                             <th style="border: 1px solid gray;">Quantity</th>
-                            <th style="border: 1px solid gray;">Total Harga</th>
+                            <th style="border: 1px solid gray;">Price</th>
                             <th style="border: 1px solid gray; padding-left: 35px;">Action</th>
                         </tr>
                     </thead>
@@ -83,18 +83,37 @@
                         <!-- Isi tabel -->
                     </tbody>
                 </table>
+                <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
+                    <button id="clear-all-button" style="background-color: #dc3545; color: white; border: none; padding: 0.5rem 1rem; border-radius: 0.25rem; cursor: pointer; margin-right: 10px;">Clear All</button>
+                    <button style="background-color: #3490dc; color: white; border: none; padding: 0.5rem 1rem; border-radius: 0.25rem; cursor: pointer;" data-bs-toggle="modal" data-bs-target="#checkoutModal">Checkout</button>
+                </div>
             </div>
-            <div style="margin-left: 20px; width: fit-content;">
-                <label for="payment-method" style="margin-right: 10px;">Pilih Metode Pembayaran:</label>
-                <select name="payment-method" id="payment-method">
-                    @foreach($paymentMethods as $paymentMethod)
-                        <option value="{{ $paymentMethod->id }}">{{ $paymentMethod->name }}</option>
-                    @endforeach
-                </select>
-            </div>
-            <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
-                <button id="clear-all-button" style="background-color: #dc3545; color: white; border: none; padding: 0.5rem 1rem; border-radius: 0.25rem; cursor: pointer; margin-right: 10px;">Clear All</button>
-                <button id="checkout-button" style="background-color: #28a745; color: white; border: none; padding: 0.5rem 1rem; border-radius: 0.25rem; cursor: pointer;">Checkout</button>
+
+            <div class="modal" id="checkoutModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Payment</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <h4>Total Price: <span id="total-price"></span></h4>
+                            </div>      
+                            <div class="mb-3">
+                                <label for="payment-method" class="form-label">{{ __('Select Payment Method') }}</label>
+                                <select id="payment-method" name="payment-method" class="form-select">
+                                    @foreach($paymentMethods as $paymentMethod)
+                                        <option value="{{ $paymentMethod->id }}">{{ $paymentMethod->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>                          
+                        </div>
+                        <div class="modal-footer">
+                            <button id="checkout-button" style="background-color: #28a745; color: white; border: none; padding: 0.5rem 1rem; border-radius: 0.25rem; cursor: pointer;">Confirm</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -163,18 +182,21 @@
 
         function renderCart() {
             selectedProducts.innerHTML = '';
+            let totalPrice = 0; // Initialize total price variable
+
             if (cart.length === 0) {
-            const tr = document.createElement('tr');
-            const tdEmpty = document.createElement('td');
-            tdEmpty.textContent = 'No product in cart';
-            tdEmpty.colSpan = '4'; // Set the colspan to cover all columns
-            tdEmpty.style.textAlign = 'center';
-            tr.appendChild(tdEmpty);
-            selectedProducts.appendChild(tr);
-            document.getElementById('checkout-button').disabled = true; // Disable checkout button
-            return; // Exit the function early if cart is empty
-        }
-        document.getElementById('checkout-button').disabled = false; // Enable checkout button
+                const tr = document.createElement('tr');
+                const tdEmpty = document.createElement('td');
+                tdEmpty.textContent = 'No product in cart';
+                tdEmpty.colSpan = '4'; // Set the colspan to cover all columns
+                tdEmpty.style.textAlign = 'center';
+                tr.appendChild(tdEmpty);
+                selectedProducts.appendChild(tr);
+                document.getElementById('checkout-button').disabled = true; // Disable checkout button
+                return; // Exit the function early if cart is empty
+            }
+
+            document.getElementById('checkout-button').disabled = false; // Enable checkout button
             cart.forEach(item => {
                 const tr = document.createElement('tr');
                 tr.style.borderBottom = '1px solid gray';
@@ -204,7 +226,7 @@
                             close: true
                         }).showToast();
                     } else {
-                    // If input value is valid, set item quantity and update cart
+                        // If input value is valid, set item quantity and update cart
                         item.quantity = newValue;
                         renderCart();
                         localStorage.setItem('cart', JSON.stringify(cart));
@@ -213,9 +235,12 @@
                 tdQuantity.appendChild(inputQuantity);
 
                 const tdTotal = document.createElement('td');
-                tdTotal.textContent = `Rp ${item.price * item.quantity}`;
+                const total = item.price * item.quantity;
+                tdTotal.textContent = `Rp ${total}`;
                 tdTotal.style.borderRight = '1px solid gray';
 
+                // Add the total price of this item to totalPrice
+                totalPrice += total;
 
                 const tdAction = document.createElement('td');
                 const cancelButton = document.createElement('button');
@@ -226,9 +251,9 @@
                 cancelButton.style.marginLeft = '1rem'; // Spasi dari teks
                 cancelButton.querySelector('i').style.color = 'red'; // Mengatur warna ikon menjadi merah
                 cancelButton.addEventListener('click', function() {
-                cart = cart.filter(cartItem => cartItem.id !== item.id);
-                renderCart();
-                localStorage.setItem('cart', JSON.stringify(cart));
+                    cart = cart.filter(cartItem => cartItem.id !== item.id);
+                    renderCart();
+                    localStorage.setItem('cart', JSON.stringify(cart));
                 });
 
                 tdAction.appendChild(cancelButton);
@@ -240,6 +265,9 @@
 
                 selectedProducts.appendChild(tr);
             });
+
+            // Display the total price in the modal
+            document.getElementById('total-price').textContent = `Rp ${totalPrice}`;
         }
 
         // Render cart on page load

@@ -86,6 +86,14 @@ class TransactionController extends Controller
 
         return response()->json(['message' => 'Transaction created successfully']);
     }
+
+    public function showReceipt($id)
+    {
+        $transaction = TransactionHeader::findOrFail($id);
+        
+        return view('products-and-transactions.receipt', ['transaction' => $transaction]);
+    }
+
     public function destroy(TransactionDetail $transactionDetail)
     {
         $transactionDetail->delete();
