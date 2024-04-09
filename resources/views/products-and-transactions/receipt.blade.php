@@ -4,17 +4,13 @@
 
 @section('content')
     @include('layouts.navbar')
-
     <div class="activearea mt-5" style="width: 30%; box-shadow: 5px 5px 5px lightgray; border: 1px solid lightgray; padding: 2%; display: flex; flex-direction: column; margin: 0 auto;">
         <div class="header" style="display: flex; gap: 0px; align-items: center; flex-direction: column;">
             <div class="headeritem" style="display: flex; margin-top: -3%;">
-                <img src="https://media.istockphoto.com/id/1385217969/photo/ginger-cat-walks.jpg?s=612x612&w=0&k=20&c=mBhFzDA2dp23dV4jq6FooaSzG2tmCZMKP6TV56hMVII=" style="height: 50px;">
+                <img src="{{ asset('storage/image/ciptaposlogoonly.png') }}" class="img-fluid" alt="CiptaPOSLogo" style="max-height: 40px;">
             </div>
             <div class="headeritem" style="display: flex;">
                 <h2 style="margin: 0;"> CiptaPOS </h2>
-            </div>
-            <div class="headeritem" style="display: flex;">
-                <p style="margin: 0;"> not sure ini bisa ditaro apa </p>
             </div>
         </div>
         <div class="capper" style="margin-top: -3%;">
@@ -54,6 +50,8 @@
                 <div class="ditems"> <b> Total </b> </div>
                 <div class="ditems"> Rp {{ number_format($transaction->transactionDetail->sum('price'), 2) }} </div>
             </div>
+            <a href="/transactions" class="btn btn-danger" style="margin-bottom: 20px; margin-top: 20px; margin-left: 5px">Kembali ke Transaksi</a>
+
         </div>
     </div>
 @endsection

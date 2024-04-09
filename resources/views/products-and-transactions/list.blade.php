@@ -85,7 +85,7 @@
                 </table>
                 <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
                     <button id="clear-all-button" style="background-color: #dc3545; color: white; border: none; padding: 0.5rem 1rem; border-radius: 0.25rem; cursor: pointer; margin-right: 10px;">Clear All</button>
-                    <button style="background-color: #3490dc; color: white; border: none; padding: 0.5rem 1rem; border-radius: 0.25rem; cursor: pointer;" data-bs-toggle="modal" data-bs-target="#checkoutModal">Checkout</button>
+                    <button id= "checkout-modal"style="background-color: #3490dc; color: white; border: none; padding: 0.5rem 1rem; border-radius: 0.25rem; cursor: pointer;" data-bs-toggle="modal" data-bs-target="#checkoutModal">Checkout</button>
                 </div>
             </div>
 
@@ -99,7 +99,7 @@
                         <div class="modal-body">
                             <div class="mb-3">
                                 <h4>Total Price: <span id="total-price"></span></h4>
-                            </div>      
+                            </div>
                             <div class="mb-3">
                                 <label for="payment-method" class="form-label">{{ __('Select Payment Method') }}</label>
                                 <select id="payment-method" name="payment-method" class="form-select">
@@ -107,7 +107,11 @@
                                         <option value="{{ $paymentMethod->id }}">{{ $paymentMethod->name }}</option>
                                     @endforeach
                                 </select>
-                            </div>                          
+                            </div>
+                            <div id="card-details">
+                                <label for="card-number" class="form-label">Card Number</label>
+                                <input type="text" id="card-number" name="card-number" class="form-control">
+                            </div>
                         </div>
                         <div class="modal-footer">
                             <button id="checkout-button" style="background-color: #28a745; color: white; border: none; padding: 0.5rem 1rem; border-radius: 0.25rem; cursor: pointer;">Confirm</button>
@@ -121,59 +125,53 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('category-dropdown').addEventListener('change', function() {
-                document.getElementById('category-form').submit();
-            });
-        });
-        document.addEventListener('DOMContentLoaded', function() {
-        const products = document.querySelectorAll('.product');
-        const selectedProducts = document.getElementById('selected-products');
-        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            const products = document.querySelectorAll('.product');
+            const selectedProducts = document.getElementById('selected-products');
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
-        products.forEach(product => {
-            const addToCartButton = product.querySelector('.add-to-cart');
-            const productId = product.getAttribute('data-product-id');
-            const stock = parseInt(product.querySelector('.stock').textContent.replace('Stock: ', ''));
+            products.forEach(product => {
+                const addToCartButton = product.querySelector('.add-to-cart');
+                const productId = product.getAttribute('data-product-id');
+                const stock = parseInt(product.querySelector('.stock').textContent.replace('Stock: ', ''));
 
-            addToCartButton.addEventListener('click', function() {
-                const existingProductIndex = cart.findIndex(item => item.id === productId);
+                addToCartButton.addEventListener('click', function() {
+                    const existingProductIndex = cart.findIndex(item => item.id === productId);
 
-                if (existingProductIndex !== -1) {
-                // Product already in cart, increment quantity if below stock
-                    if (cart[existingProductIndex].quantity < cart[existingProductIndex].stock) {
-                        cart[existingProductIndex].quantity++;
+                    if (existingProductIndex !== -1) {
+                        // Product already in cart, increment quantity if below stock
+                        if (cart[existingProductIndex].quantity < cart[existingProductIndex].stock) {
+                            cart[existingProductIndex].quantity++;
+                        } else {
+                        // Show alert if trying to add more than stock
+                            Toastify({
+                                text: 'Cannot add more. Stock limit reached.',
+                                backgroundColor: 'red',
+                                position: 'bottom',
+                                gravity: 'bottom',
+                                close: true
+                            }).showToast();
+                        }
                     } else {
-                    // Show alert if trying to add more than stock
-                        Toastify({
-                            text: 'Cannot add more. Stock limit reached.',
-                            backgroundColor: 'red',
-                            position: 'bottom',
-                            gravity: 'bottom',
-                            close: true
-                        }).showToast();
-                    }
-                } else {
-                // Product not in cart, add to cart with quantity default to 1
-                    const productName = product.querySelector('h3').textContent;
-                    const productPriceElement = product.querySelector('#product-price-discounted');
-                    const priceText = productPriceElement.innerText.trim();
+                        // Product not in cart, add to cart with quantity default to 1
+                        const productName = product.querySelector('h3').textContent;
+                        const productPriceElement = product.querySelector('#product-price-discounted');
+                        const priceText = productPriceElement.innerText.trim();
 
-                    let productPrice;
-                    if (/^Rp \d+\nRp \d+$/.test(priceText)) {
-                         // Format: Rp 15000\nRp 14250
+                        let productPrice;
+                        if (/^Rp \d+\nRp \d+$/.test(priceText)) {
+                            // Format: Rp 15000\nRp 14250
                         productPrice = parseFloat(priceText.split('\n')[1].replace('Rp ', ''));
-                    } else if (/^Rp \d+$/.test(priceText)) {
-                        // Format: Rp 10000
-                        productPrice = parseFloat(priceText.replace('Rp ', ''));
+                        } else if (/^Rp \d+$/.test(priceText)) {
+                            // Format: Rp 10000
+                            productPrice = parseFloat(priceText.replace('Rp ', ''));
+                        }
+                        cart.push({ id: productId, name: productName, price: productPrice, quantity: 1, stock: stock });
                     }
 
-                    cart.push({ id: productId, name: productName, price: productPrice, quantity: 1, stock: stock });
-                }
-
-                renderCart();
-                localStorage.setItem('cart', JSON.stringify(cart));
+                    renderCart();
+                    localStorage.setItem('cart', JSON.stringify(cart));
+                });
             });
-        });
         document.getElementById('clear-all-button').addEventListener('click', function() {
             cart = [];
             renderCart();
@@ -192,11 +190,11 @@
                 tdEmpty.style.textAlign = 'center';
                 tr.appendChild(tdEmpty);
                 selectedProducts.appendChild(tr);
-                document.getElementById('checkout-button').disabled = true; // Disable checkout button
+                document.getElementById('checkout-modal').disabled = true; // Disable checkout button
                 return; // Exit the function early if cart is empty
             }
 
-            document.getElementById('checkout-button').disabled = false; // Enable checkout button
+            document.getElementById('checkout-modal').disabled = false; // Enable checkout button
             cart.forEach(item => {
                 const tr = document.createElement('tr');
                 tr.style.borderBottom = '1px solid gray';
@@ -269,80 +267,85 @@
             // Display the total price in the modal
             document.getElementById('total-price').textContent = `Rp ${totalPrice}`;
         }
+            // Render cart on page load
+            renderCart();
 
-        // Render cart on page load
-        renderCart();
+            document.getElementById('payment-method').addEventListener('click', function(event) {
+            // Hentikan event click agar tidak naik ke elemen induk (modal)
+                 event.stopPropagation();
+            });
+
         document.getElementById('checkout-button').addEventListener('click', function() {
             const paymentMethodId = document.getElementById('payment-method').value;
+            const cardNumber = document.getElementById('card-number').value;
 
+            // Validasi jika metode pembayaran adalah 'Card' dan nomor kartu tidak diisi
+            if (paymentMethodId === '2' && !cardNumber) {
+                Toastify({
+                    text: 'Please enter your card number.',
+                    duration: 3000, // Durasi toast message (ms)
+                    gravity: 'bottom', // Letak toast message (top, bottom, center)
+                    backgroundColor: '#ff6347', // Warna background toast message
+                    stopOnFocus: true, // Menghentikan countdown saat toast message dihover
+                }).showToast();
+                return; // Menghentikan eksekusi lebih lanjut jika kondisi tidak terpenuhi
+            }
             // Send shopping cart data and payment method ID to route /transaction
-            fetch('{{ route("transactions.store") }}', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                body: JSON.stringify({
-                    cart: cart,
-                    payment_method_id: paymentMethodId
-                })
+            $.post('{{ route("transactions.store") }}', {
+                cart: cart,
+                payment_method_id: paymentMethodId,
+                card_number: cardNumber,
+                _token: '{{ csrf_token() }}'
             })
-            .then(response => {
-                if (response.ok) {
-                    return response.json();
-                }
-                throw new Error('Network response was not ok.');
-            })
-            .then(data => {
-                console.log(data);
+            .done(function(data) {
                 localStorage.removeItem('cart');
-                window.location.href = '/transactions';
+                window.location.href = data.redirect_url;
             })
-            .catch(error => {
+            .fail(function(xhr, status, error) {
                 console.error('There has been a problem with your fetch operation:', error);
             });
-        });
+            });
 
         const searchBar = document.getElementById('search-bar');
         const searchResults = document.getElementById('search-results');
 
         searchBar.addEventListener('input', function() {
-        const query = searchBar.value.trim();
+            const query = searchBar.value.trim();
 
-        if (query === '') {
-            searchResults.style.display = 'none';
-            return;
-        }
+            if (query === '') {
+                searchResults.style.display = 'none';
+                return;
+            }
 
-        fetch(`/search?q=${query}`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                // Render search results
-                renderSearchResults(data);
-            })
-            .catch(error => {
-                console.error('There has been a problem with your fetch operation:', error);
-            });
+            fetch(`/search?q=${query}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Render search results
+                    renderSearchResults(data);
+                })
+                .catch(error => {
+                    console.error('There has been a problem with your fetch operation:', error);
+                });
         });
 
         function renderSearchResults(results) {
-        searchResults.innerHTML = '';
+            searchResults.innerHTML = '';
 
-        if (results.length === 0) {
-            searchResults.style.display = 'none';
-            return;
-        }
+            if (results.length === 0) {
+                searchResults.style.display = 'none';
+                return;
+            }
 
-        results.forEach(result => {
-            const div = document.createElement('div');
-            div.textContent = result.name;
-            div.style.padding = '5px';
-            div.style.cursor = 'pointer';
+            results.forEach(result => {
+                const div = document.createElement('div');
+                div.textContent = result.name;
+                div.style.padding = '5px';
+                div.style.cursor = 'pointer';
                 div.addEventListener('click', function() {
                     // Set selected search result to search bar
                     searchBar.value = result.name;
@@ -353,12 +356,13 @@
             searchResults.style.display = 'block';
         }
 
-            // Close search results when clicking outside
-            document.addEventListener('click', function(event) {
-                if (!searchResults.contains(event.target) && event.target !== searchBar) {
-                    searchResults.style.display = 'none';
-                }
-            });
+        // Close search results when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!searchResults.contains(event.target) && event.target !== searchBar) {
+                searchResults.style.display = 'none';
+            }
         });
-    </script>
+    });
+</script>
+
 @endsection
