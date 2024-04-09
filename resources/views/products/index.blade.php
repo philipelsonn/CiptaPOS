@@ -31,10 +31,10 @@
                         @foreach ($products as $product)
                             <tr>
                                 <td class="align-middle fw-bold">{{ $product->id }}</td>
-                                <td class="align-middle">{{ $product->name }}</td>
+                                <td id="product-name-{{ $product->id }}" class="align-middle">{{ $product->name }}</td>
                                 <td class="align-middle">{{ $product->description }}</td>
                                 <td class="align-middle">
-                                    <img src="/storage/images/product/{{ $product->image }}" alt="{{ $product->name}} image" style="max-height: 40px;">
+                                    <img src="{{ asset('storage/'.$product->image) }}" alt="{{ $product->name }} image" style="max-height: 40px;">
                                 </td>
                                 <td class="align-middle">{{ $product->price }}</td>
                                 <td class="align-middle">{{ $product->productCategory->name }}</td>
@@ -220,6 +220,34 @@
                     backgroundColor: "#3da25c",
                 }).showToast();
             @endif
+        });
+        document.addEventListener('DOMContentLoaded', function () {
+        // Cek apakah ada produk dengan stok di bawah 5
+            const lowStockProducts = @json($products->filter(function($product) {
+                return $product->stock < 5;
+            }));
+            Object.keys(lowStockProducts).forEach(function(key) {
+            const productId = lowStockProducts[key].id;
+            const productName = document.getElementById('product-name-' + productId);
+                if (productName) {
+                    productName.style.color = 'red';
+                }
+            });
+
+             // Jika ada produk dengan stok di bawah 5, tampilkan toastify
+            if (Object.keys(lowStockProducts).length > 0) {
+                Toastify({
+                    text: "Some products are low in stock. Click here to manage supplier transactions.",
+                    duration: 0,  // set duration to 0 to make the toast sticky
+                    close: true,
+                    gravity: "bottom",
+                    position: "left",
+                    backgroundColor: "#f8c10b",
+                    onClick: function() {
+                        window.location.href = "{{ route('supplier-transactions.index') }}";
+                    }
+                }).showToast();
+            }
         });
     </script>
 @endsection
