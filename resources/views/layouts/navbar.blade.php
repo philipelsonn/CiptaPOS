@@ -4,7 +4,7 @@
         <nav class="navbar navbar-expand-lg bg-body-tertiary px-5">
             <div class="container-fluid">
                 <!-- Logo di pojok kiri -->
-                <a class="navbar-brand" href="#">
+                <a class="navbar-brand" href="{{route('dashboard')}}">
                     <img src="{{ asset('storage/image/ciptaposlogoonly.png') }}" class="img-fluid" alt="CiptaPOSLogo" style="max-height: 40px;">
                 </a>
 
@@ -12,21 +12,21 @@
                 <div class="navbar-collapse justify-content-center" id="navbarSupportedContent">
                     <ul class="navbar-nav">
                         <li class="nav-item">
-                            <a class="nav-link" aria-current="page" href="#">Home</a>
+                            <a class="nav-link" aria-current="page" href="{{route('dashboard')}}">Home</a>
                         </li>
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 Products & Transactions</a>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="{{route('products.index')}}">Products</a></li>
                                 <li><a class="dropdown-item" href="{{route('product-categories.index')}}">Product Categories</a></li>
+                                <li><a class="dropdown-item" href="{{route('stockout.index')}}">Stockouts</a></li>
                                 <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="{{route('transactions.history') }}">Transaction History</a></li>
                                 <li><a class="dropdown-item" href="{{route('payment-methods.index')}}">Payment Methods</a></li>
                             </ul>
                         </li>
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 Suppliers</a>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="{{route('suppliers.index')}}">Suppliers</a></li>
