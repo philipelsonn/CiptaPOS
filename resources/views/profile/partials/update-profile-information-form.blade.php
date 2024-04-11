@@ -9,18 +9,13 @@
 
             <div class="d-block mt-10">
                 <div>
-                    <img src="{{ asset('storage/' . $user->avatar) }}" class="ml-5" alt="Profile Picture" style="width: 330px; height: 330px;"/>
+                    <img src="{{ asset('storage/' . $user->avatar) }}" id="profilePicture" class="ml-5" alt="Profile Picture" style="width: 330px; height: 330px;" />
                 </div>
                 <div>
                     <label for="imageInput" class="bg-dark text-white hover:bg-blue-700 font-bold py-2 px-4 rounded mt-4" style="width: 400px; display: block; text-align: center; cursor: pointer;">
                         Change Image
                         <input type="file" id="imageInput" class="hidden" accept="image/*" onchange="previewImage(event)">
                     </label>
-                </div>
-                <div class="md:col-span-2">
-                    <button type="button" class="bg-dark text-white hover:bg-blue-700 font-bold py-2 px-4 rounded mt-4" style="width: 400px">
-                        Preview
-                    </button>
                 </div>
             </div>
 
@@ -146,16 +141,19 @@ function showStatusMessage() {
 
 <script>
     function previewImage(event) {
-        var input = event.target;
-        if (input.files && input.files[0]) {
-            var reader = new FileReader();
-            reader.onload = function(e) {
-                var preview = document.getElementById('imagePreview');
-                preview.src = e.target.result;
-            };
-            reader.readAsDataURL(input.files[0]);
-        }
+    var input = event.target;
+
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+
+        reader.onload = function(e) {
+            var preview = document.getElementById('profilePicture');
+            preview.src = e.target.result;
+        };
+    
+        reader.readAsDataURL(input.files[0]);
     }
+}
 </script>
 
 

@@ -11,6 +11,7 @@ use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\SupplierPricingController;
 use App\Http\Controllers\SupplierTransactionController;
+use App\Http\Controllers\DashboardController;
 use App\Models\Product;
 
 
@@ -25,13 +26,7 @@ use App\Models\Product;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -72,7 +67,7 @@ Route::resource('supplier-transactions', SupplierTransactionController::class)->
 
 Route::post('/transactions', [TransactionController::class, 'store'])->name('transactions.store');
 
-Route::get('transactions', [TransactionController::class, 'index']);
+Route::get('transactions', [TransactionController::class, 'index'])->name("transactions.dashboard");
 
 Route::get('/product-transactions/receipt/{id}',  [TransactionController::class, 'showReceipt'])->name('product.transactions.receipt');
 
@@ -91,6 +86,7 @@ Route::get('/search', function () {
     $results = Product::where('name', 'like', '%'.$query.'%')->get();
     return response()->json($results);
 });
+
 Route::get('/product/search', [ProductController::class, 'search'])->name('product/search');
 
 Route::get('/products/by_category', [ProductController::class, 'getByCategory'])->name('products.by_category');
