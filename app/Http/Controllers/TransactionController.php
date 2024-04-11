@@ -8,8 +8,9 @@ use App\Models\TransactionDetail;
 use App\Models\Product;
 use App\Models\PaymentMethod;
 use App\Models\ProductCategory;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
-
+use Illuminate\Support\Facades\Validator;
 
 class TransactionController extends Controller
 {
@@ -62,7 +63,9 @@ class TransactionController extends Controller
         $transactionHeader->cashier_id = auth()->id();
         $transactionHeader->payment_method_id = $request->payment_method_id;
         $transactionHeader->transaction_date = now();
+        $transactionHeader->card_number = $request->card_number ? Crypt::encrypt($request->card_number) : null; // Enkripsi hanya jika tidak null
         $transactionHeader->save();
+
 
         // Refresh transactionHeader to get the latest data, including the ID
         $transactionHeader->refresh();
@@ -84,13 +87,16 @@ class TransactionController extends Controller
 
         $request->session()->forget('cart');
 
-        return response()->json(['message' => 'Transaction created successfully']);
+        return response()->json([
+            'message' => 'Transaction created successfully',
+            'redirect_url' => route('product.transactions.receipt', ['id' => $transactionHeader->id])
+        ]);
     }
 
     public function showReceipt($id)
     {
         $transaction = TransactionHeader::findOrFail($id);
-        
+
         return view('products-and-transactions.receipt', ['transaction' => $transaction]);
     }
 

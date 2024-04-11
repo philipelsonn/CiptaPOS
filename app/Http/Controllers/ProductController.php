@@ -9,6 +9,7 @@ use App\Models\Supplier;
 use App\Models\SupplierPricing;
 use App\Models\SupplierTransaction;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 
@@ -42,9 +43,8 @@ class ProductController extends Controller
             'price_per_piece'=> 'required|integer',
         ]);
         if ($request->hasFile('image')) {
-            $extension = $request->file('image')->getClientOriginalExtension();
-            $file_name = $request->name . time() . '.' . $extension;
-            $request->file('image')->storeAs('public/images/product', $file_name);
+            $file_name = 'productImage/' . $request->file('image')->getClientOriginalName();
+            $request->file('image')->storeAs('public/', $file_name);
         }
 
         $product = Product::create([
@@ -87,9 +87,8 @@ class ProductController extends Controller
         ]);
 
         if ($request->hasFile('image_new')) {
-            $extension = $request->file('image_new')->getClientOriginalExtension();
-            $file_name = $request->name . time() . '.' . $extension;
-            $request->file('image_new')->storeAs('public/images/product', $file_name);
+            $file_name = 'productImage/' . $request->file('image_new')->getClientOriginalName();
+            $request->file('image_new')->storeAs('public/', $file_name);
         } else {
             $file_name = request('image_old');
         }
@@ -111,6 +110,9 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
+        if ($product->image) {
+            Storage::delete('public/' . $product->image);
+        }
         $product->delete();
 
         return redirect()->route("products.index")->with(['success' => 'Product deleted successfully', 'action' => 'delete']);
