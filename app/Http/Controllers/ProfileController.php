@@ -10,7 +10,8 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Storage;
 use App\Models\User;
-
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 
 class ProfileController extends Controller
 {
@@ -23,7 +24,7 @@ class ProfileController extends Controller
             'employees' => User::all()
         ]);
     }
-    
+
     /**
      * Display the user's profile form.
      */
@@ -41,26 +42,47 @@ class ProfileController extends Controller
     {
         $user = $request->user();
 
+        // Validasi input
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,'.$user->id,
+            'phone_number' => 'required|string|max:15',
+            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'current_password' => 'nullable|string|min:8',
+            'password' => 'nullable|string|min:8|confirmed',
+        ]);
+
+        // Periksa apakah perlu memperbarui password
+        if ($request->filled('current_password') && $request->filled('password')) {
+            if (!Hash::check($request->input('current_password'), $user->password)) {
+                return back()->withErrors(['current_password' => 'The provided password does not match your current password.']);
+            }
+
+            $user->password = Hash::make($validatedData['password']);
+        }
+
+        // Periksa apakah ada file avatar yang diunggah
         if ($request->hasFile('avatar')) {
-            // Menghapus gambar lama jika ada
+            // Hapus avatar lama jika ada
             if ($user->avatar) {
                 Storage::delete($user->avatar);
             }
 
-            // Mengunggah gambar baru
+            // Upload avatar baru
             $avatarPath = $request->file('avatar')->store('image', 'public');
             $user->avatar = $avatarPath;
         }
 
-        $user->fill($request->validated());
+        // Perbarui informasi profil
+        $user->name = $validatedData['name'];
+        $user->email = $validatedData['email'];
+        $user->phone_number = $validatedData['phone_number'];
 
-        if ($user->isDirty('email')) {
-            $user->email_verified_at = null;
-        }
-
+        // Simpan perubahan
         $user->save();
 
-        return Redirect::route('profile.edit')->with('status', 'profile-updated');
+        // Redirect kembali ke halaman profil dengan pesan sukses
+        return redirect()->route('profile.edit', ['status' => 'Profile updated successfully.']);
     }
 
     /**
