@@ -19,7 +19,7 @@ class TransactionController extends Controller
         $products = Product::paginate(5); // Menampilkan 10 produk per halaman
         $paymentMethods = PaymentMethod::all();
         $productCategories = ProductCategory::all();
-        $selectedCategory = 'All Category';
+        $selectedCategory = 'All Categories';
         return view('products-and-transactions.list', compact('products', 'paymentMethods', 'productCategories', 'selectedCategory'));
     }
 
