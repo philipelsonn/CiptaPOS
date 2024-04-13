@@ -304,34 +304,34 @@
             .fail(function(xhr, status, error) {
                 console.error('There has been a problem with your fetch operation:', error);
             });
-            });
-
+        });
         const searchBar = document.getElementById('search-bar');
         const searchResults = document.getElementById('search-results');
 
         searchBar.addEventListener('input', function() {
-            const query = searchBar.value.trim();
+        const query = searchBar.value.trim();
 
-            if (query === '') {
-                searchResults.style.display = 'none';
-                return;
-            }
+        if (query === '') {
+            searchResults.style.display = 'none';
+            return;
+        }
 
-            fetch(`/search?q=${query}`)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    // Render search results
-                    renderSearchResults(data);
-                })
-                .catch(error => {
-                    console.error('There has been a problem with your fetch operation:', error);
-                });
+        fetch(`/search?q=${query}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Render search results
+                renderSearchResults(data);
+            })
+            .catch(error => {
+                console.error('There has been a problem with your fetch operation:', error);
+            });
         });
+
 
         function renderSearchResults(results) {
             searchResults.innerHTML = '';
@@ -361,6 +361,14 @@
             if (!searchResults.contains(event.target) && event.target !== searchBar) {
                 searchResults.style.display = 'none';
             }
+        });
+    });
+    document.addEventListener('DOMContentLoaded', function() {
+        const categoryDropdown = document.getElementById('category-dropdown');
+
+        categoryDropdown.addEventListener('change', function() {
+            // Submit form when dropdown value changes
+            this.form.submit();
         });
     });
 </script>

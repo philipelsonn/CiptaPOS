@@ -129,7 +129,9 @@ class ProductController extends Controller
             $products = Product::paginate(5);;
         }
         $paymentMethods = PaymentMethod::all();
-        return view('products-and-transactions.list', compact('products', 'paymentMethods'));
+        $selectedCategory = 'All Categories';
+        $productCategories = ProductCategory::all();
+        return view('products-and-transactions.list', compact('products', 'paymentMethods', 'selectedCategory', 'productCategories'));
     }
 
     public function getByCategory(Request $request)
@@ -146,6 +148,4 @@ class ProductController extends Controller
         $productCategories = ProductCategory::all();
         return view('products-and-transactions.list', compact('products', 'paymentMethods', 'productCategories', 'selectedCategory'));
     }
-
-
 }
