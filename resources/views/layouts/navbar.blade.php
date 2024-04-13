@@ -9,36 +9,42 @@
                 </a>
 
                 <!-- Menu Navbar di tengah -->
-                <div class="navbar-collapse justify-content-center" id="navbarSupportedContent">
-                    <ul class="navbar-nav">
-                        <li class="nav-item">
-                            <a class="nav-link" aria-current="page" href="{{route('dashboard')}}">Home</a>
-                        </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Products & Transactions</a>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="{{route('products.index')}}">Products</a></li>
-                                <li><a class="dropdown-item" href="{{route('product-categories.index')}}">Product Categories</a></li>
-                                <li><a class="dropdown-item" href="{{route('stockout.index')}}">Stockouts</a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="{{route('payment-methods.index')}}">Payment Methods</a></li>
-                            </ul>
-                        </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Suppliers</a>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="{{route('suppliers.index')}}">Suppliers</a></li>
-                                <li><a class="dropdown-item" href="{{route('supplier-transactions.index')}}">Supplier Transactions</a></li>
-                                <li><a class="dropdown-item" href="{{route('supplier-pricings.index')}}">Supplier Pricings</a></li>
-                            </ul>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" aria-current="page" href="{{route('employees.index')}}">Employees</a>
-                        </li>
-                    </ul>
-                </div>
+                @auth
+                @if (Auth::user()->type == 'admin')
+                    <div class="navbar-collapse justify-content-center" id="navbarSupportedContent">
+                        <ul class="navbar-nav">
+                            <li class="nav-item">
+                                <a class="nav-link" aria-current="page" href="{{ route('dashboard') }}">Home</a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Products & Transactions
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="{{ route('products.index') }}">Products</a></li>
+                                    <li><a class="dropdown-item" href="{{ route('product-categories.index') }}">Product Categories</a></li>
+                                    <li><a class="dropdown-item" href="{{ route('stockout.index') }}">Stockouts</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="{{ route('payment-methods.index') }}">Payment Methods</a></li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Suppliers
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="{{ route('suppliers.index') }}">Suppliers</a></li>
+                                    <li><a class="dropdown-item" href="{{ route('supplier-transactions.index') }}">Supplier Transactions</a></li>
+                                    <li><a class="dropdown-item" href="{{ route('supplier-pricings.index') }}">Supplier Pricings</a></li>
+                                </ul>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" aria-current="page" href="{{ route('employees.index') }}">Employees</a>
+                            </li>
+                        </ul>
+                    </div>
+                @endif
+                @endauth
 
                 <!-- Profil di pojok kanan -->
                 <div class="text-right">
