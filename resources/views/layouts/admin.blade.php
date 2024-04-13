@@ -35,6 +35,17 @@
             ]
             });
 
+            var toastMessage = "{{ Session::get('toast_message') }}";
+            if (toastMessage) {
+                Toastify({
+                    text: toastMessage,
+                    duration: 3000,
+                    backgroundColor: "linear-gradient(to right, #FF5733, #FFC300)",
+                    close: true,
+                    gravity: "top", 
+                    position: "right"
+                }).showToast();
+            }
         } );
     </script>
 </body>
