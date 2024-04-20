@@ -26,15 +26,19 @@
                 <div class="ditems right"> {{ $transaction->id }} </div>
             </div>
             <div class="dcolumn" style="display: flex; flex-direction: row; justify-content: space-between; padding: 2%; margin-top: -1%; margin-bottom: -1%;">
-                <div class="ditems left"> Kasir </div>
+                <div class="ditems left"> Cashier </div>
                 <div class="ditems right"> {{ $transaction->user->name }} </div>
+            </div>
+            <div class="dcolumn" style="display: flex; flex-direction: row; justify-content: space-between; padding: 2%; margin-top: -1%; margin-bottom: -1%;">
+                <div class="ditems left"> Payment Method </div>
+                <div class="ditems right"> {{ $transaction->paymentMethod->name }} </div>
             </div>
         </div>
         <div class="capper" style="margin-top: -3%;">
             <hr style="border: 1px; border-bottom: 1px solid grey;">
         </div>
         <div class="items">
-            @foreach($transaction->transactionDetail as $detail)
+            @foreach($transaction->transactionDetails as $detail)
                 <div class="itemcolumn" style="display: flex; flex-direction: row; justify-content: space-between; padding: 2%; margin-top: -1%; margin-bottom: -1%;">
                     <div class="iname"> {{ $detail->product->name }} </div>
                     <div class="iqty"> x{{ $detail->quantity }} </div>
@@ -48,9 +52,9 @@
         <div class="details">
             <div class="dcolumn" style="display: flex; flex-direction: row; justify-content: space-between; padding: 2%; margin-top: -1%; margin-bottom: -1%;">
                 <div class="ditems"> <b> Total </b> </div>
-                <div class="ditems"> Rp {{ number_format($transaction->transactionDetail->sum('price'), 2) }} </div>
+                <div class="ditems"> Rp {{ number_format($transaction->calculateTotalPrice(), 2) }} </div>
             </div>
-            <a href="/transactions" class="btn btn-danger" style="margin-bottom: 20px; margin-top: 20px; margin-left: 5px">Kembali ke Transaksi</a>
+            <a href="{{route('dashboard')}}" class="btn btn-danger" style="margin-bottom: 20px; margin-top: 20px; margin-left: 5px">Back</a>
 
         </div>
     </div>
