@@ -11,6 +11,7 @@ use App\Models\ProductCategory;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
 
 class TransactionController extends Controller
 {
@@ -25,7 +26,7 @@ class TransactionController extends Controller
 
     public function showHistory()
     {
-        $transactionHeaders = TransactionHeader::all();
+        $transactionHeaders = TransactionHeader::with('transactionDetails')->get();
         $transactionDetails = TransactionDetail::all();
         $totalRevenue = $transactionDetails->sum(function ($transactionDetail) {
             return $transactionDetail->price * $transactionDetail->quantity;

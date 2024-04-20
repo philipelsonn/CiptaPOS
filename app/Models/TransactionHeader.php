@@ -27,8 +27,15 @@ class TransactionHeader extends Model
         return $this->belongsTo(User::class, 'cashier_id', 'id');
     }
 
-    public function transactionDetail(): HasMany
+    public function transactionDetails(): HasMany
     {
         return $this->hasMany(TransactionDetail::class, 'transaction_header_id', 'id');
+    }
+
+    public function calculateTotalPrice()
+    {
+        return $this->transactionDetails->sum(function ($detail) {
+            return $detail->quantity * $detail->price;
+        });
     }
 }

@@ -32,7 +32,16 @@
                 columnDefs: [
                     {className: "columnformats", targets: "_all"},
                     {orderable: false, targets: -1 }
-            ]
+                ]
+            });
+
+            $('#transactionTable thead th').addClass('columnformats');
+            $('#transactionTable').DataTable({
+                columnDefs: [
+                    {className: "columnformats", targets: "_all"},
+                    {orderable: false, targets: -1 }
+                ],
+                "order": [[0, "desc"]]
             });
 
             var toastMessage = "{{ Session::get('toast_message') }}";

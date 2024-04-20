@@ -12,32 +12,47 @@
             <h2 class="fw-bold">Transaction History</h2>
         </div>
         <div class="table-responsive">
-            <table id="myTable" class="table table-striped bg-light">
+            <table id="transactionTable" class="table table-striped bg-light">
                 <thead>
                     <tr>
                         <th style="text-align: center;">ID</th>
                         <th style="text-align: center;">Payment Method</th>
-                        <th style="text-align: center;">Cashier ID</th>
+                        <th style="text-align: center;">Cashier</th>
                         <th style="text-align: center;">Transaction Date</th>
-                        <th style="text-align: center;">Product</th>
-                        <th style="text-align: center;">Price</th>
-                        <th style="text-align: center;">Quantity</th>
                         <th style="text-align: center;">Total Price</th>
-
+                        <th style="text-align: center;">Action</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($transactionDetails as $transactionDetail)
+                    @foreach ($transactionHeaders as $transaction)
                     <tr>
-                        <td style="text-align: center;">{{ $transactionDetail->transactionHeader->id }}</td>
-                        <td style="text-align: center;">{{ $transactionDetail->transactionHeader->paymentMethod->name }}</td>
-                        <td style="text-align: center;">{{ $transactionDetail->transactionHeader->user->name }}</td>
-                        <td style="text-align: center;">{{ $transactionDetail->transactionHeader->transaction_date }}</td>
-                        <td style="text-align: center;">{{ $transactionDetail->product->name }}</td>
-                        <td style="text-align: center;">Rp {{ number_format($transactionDetail->price, 0, ',', '.') }}</td>
-                        <td style="text-align: center;">{{ $transactionDetail->quantity }}</td>
-                        <td style="text-align: center;">Rp {{ number_format($transactionDetail->price * $transactionDetail->quantity, 0, ',', '.') }}</td>
+                        <td style="text-align: center;">{{ $transaction->id }}</td>
+                        <td style="text-align: center;">{{ $transaction->paymentMethod->name }}</td>
+                        <td style="text-align: center;">{{ $transaction->user->name }}</td>
+                        <td style="text-align: center;">{{ $transaction->transaction_date }}</td>
+                        <td style="text-align: center;">Rp {{ number_format($transaction->calculateTotalPrice(), 2) }}</td>
+                        <td style="text-align: center;">
+                        <a class="btn btn-sm btn-success me-2" href="{{ route('product.transactions.receipt', ['id' => $transaction->id]) }}">
+                            <i class='far fa-eye'></i></a>
+                        @if ($transaction->paymentMethod->name == 'Card')
+                            <a class="btn btn-sm btn-info me-2" data-bs-toggle="modal" data-bs-target="#showCardNumber{{$transaction->id}}">
+                                <i class='far fa-credit-card'></i></a>
+                        @endif
+                        </td>
                     </tr>
+                    <div class="modal fade" id="showCardNumber{{$transaction->id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title" id="showCardNumber">Card Number</h5>
+                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                {{$transaction->card_number}}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                     @endforeach
                 </tbody>
             </table>
