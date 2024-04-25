@@ -46,19 +46,23 @@ class ProfileController extends Controller
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,'.$user->id,
-            'phone_number' => 'required|string|max:15',
+            'phone_number' => 'required|string|max:15|regex:/^[0-9]*$/',
             'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'current_password' => 'nullable|string|min:8',
             'password' => 'nullable|string|min:8|confirmed',
         ]);
 
         // Periksa apakah perlu memperbarui password
-        if ($request->filled('current_password') && $request->filled('password')) {
+        if ($request->filled('current_password')) {
             if (!Hash::check($request->input('current_password'), $user->password)) {
                 return back()->withErrors(['current_password' => 'The provided password does not match your current password.']);
             }
 
-            $user->password = Hash::make($validatedData['password']);
+            if ($request->filled('password')) {
+                $user->password = Hash::make($request->input('password'));
+            } else {
+                return back()->withErrors(['password' => 'New password field must be filled to update password.']);
+            }
         }
 
         // Periksa apakah ada file avatar yang diunggah

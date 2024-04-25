@@ -54,8 +54,9 @@
                 <div class="ditems"> <b> Total </b> </div>
                 <div class="ditems"> Rp {{ number_format($transaction->calculateTotalPrice(), 2) }} </div>
             </div>
-            <a href="{{route('dashboard')}}" class="btn btn-danger" style="margin-bottom: 20px; margin-top: 20px; margin-left: 5px">Back</a>
-
+            <div style="text-align: center;">
+                <a href="{{route('dashboard')}}" class="btn btn-danger" style="margin-bottom: 20px; margin-top: 20px; display: inline-block;">Return to transaction page</a>
+            </div>
         </div>
     </div>
 @endsection

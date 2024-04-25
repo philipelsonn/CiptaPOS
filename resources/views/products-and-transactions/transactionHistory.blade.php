@@ -85,9 +85,9 @@
                     @foreach ($transactionDetailsTop5 as $transaction)
                     <tr>
                         <td style="border: 1px solid #dee2e6; padding: 8px;">{{ $transaction->product->name }}</td>
-                        <td style="border: 1px solid #dee2e6; padding: 8px;">{{ $transaction->price }}</td>
+                        <td style="border: 1px solid #dee2e6; padding: 8px;">Rp {{ number_format($transaction->price, 0, ',', '.') }}</td>
                         <td style="border: 1px solid #dee2e6; padding: 8px;">{{ $transaction->quantity }}</td>
-                        <td style="border: 1px solid #dee2e6; padding: 8px;">{{ $transaction->price * $transaction->quantity }}</td>
+                        <td style="border: 1px solid #dee2e6; padding: 8px;">Rp {{ number_format($transaction->price * $transaction->quantity, 0, ',', '.') }}</td>
                     </tr>
                     @endforeach
                 </tbody>
@@ -144,7 +144,16 @@ var myChart = new Chart(ctx, {
                     }
                 }
             },
-
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        var label = context.label || '';
+                        var value = context.raw || '';
+                        var percent = context.raw / context.dataset.data.reduce((a, b) => a + b) * 100;
+                        return label + ': ' + value + ' (' + percent.toFixed(2) + '%)';
+                    }
+                }
+            }
         }
     }
 });
@@ -162,7 +171,7 @@ var myChart = new Chart(ctx, {
             data: {
                 labels: {!! json_encode($mostSoldProducts->pluck('product.name')->take(5)) !!},
                 datasets: [{
-                    label: 'Most Sold Products',
+                    label: 'Quantity Sold',
                     data: {!! json_encode($mostSoldProducts->pluck('total_quantity')->take(5)) !!},
                     backgroundColor: Object.values(colorsByProductName),
                     borderColor: 'rgba(54, 162, 235, 1)',
