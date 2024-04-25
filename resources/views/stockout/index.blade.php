@@ -56,12 +56,13 @@
                     <h5 class="modal-title" id="exampleModalLabel">Add stockout entry</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form action="{{ route('stockout.store') }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('stockout.store') }}" id = "addStockoutForm" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="modal-body mx-3">
                         <div class="search">
                             <label for="product_name" class="form-label">Product Name</label>
                             <input id="product_name" class="form-control form-control-sm" type="text" placeholder="Search Product" required>
+                            <div id="productNameError" class="text-danger" style="display: none;"></div>
                         </div>
                         <div class="position-relative">
                             <div id="autocomplete-results" class="position-absolute bg-white border shadow-sm rounded-3 mt-1" style="display: none; top: 100%; width: 100%;"></div>
@@ -70,10 +71,12 @@
                         <div class="mt-3">
                             <label for="quantity" class="form-label">Quantity</label>
                             <input id="quantity"name= "quantity" class="form-control form-control-sm" type="number" placeholder="Quantity" required>
+                            <div id="quantityError" class="text-danger" style="display: none;"></div>
                         </div>
                         <div class="mt-3">
                             <label for="description" class="form-label">Description</label>
                             <textarea id="description" name= "description" class="form-control form-control-sm" placeholder="Description" required></textarea>
+                            <div id="descriptionError" class="text-danger" style="display: none;"></div>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -85,42 +88,94 @@
     </div>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-    var availableProducts = @json($products);
-    var searchInput = document.getElementById('product_name');
-    var autocompleteResults = document.getElementById('autocomplete-results');
-    var productIdInput = document.getElementById('product_id'); // tambahkan ini
+            var availableProducts = @json($products);
+            var searchInput = document.getElementById('product_name');
+            var autocompleteResults = document.getElementById('autocomplete-results');
+            var productIdInput = document.getElementById('product_id');
 
-    searchInput.addEventListener('input', function() {
-        var value = this.value.toLowerCase();
-        var suggestions = availableProducts.filter(function(product) {
-            return product.name.toLowerCase().includes(value);
-        });
-
-        autocompleteResults.innerHTML = '';
-        suggestions.forEach(function(product) {
-            var div = document.createElement('div');
-            div.textContent = product.name;
-            div.classList.add('p-2', 'cursor-pointer');
-            div.addEventListener('click', function() {
-                searchInput.value = product.name;
-                productIdInput.value = product.id; // simpan ID produk ke input tersembunyi
-                autocompleteResults.style.display = 'none';
+            searchInput.addEventListener('input', function() {
+                var value = this.value.toLowerCase();
+                var suggestions = availableProducts.filter(function(product) {
+                return product.name.toLowerCase().includes(value);
             });
-            autocompleteResults.appendChild(div);
+
+            autocompleteResults.innerHTML = '';
+            suggestions.forEach(function(product) {
+                var div = document.createElement('div');
+                div.textContent = product.name;
+                div.classList.add('p-2', 'cursor-pointer');
+                div.addEventListener('click', function() {
+                    searchInput.value = product.name;
+                    productIdInput.value = product.id; // simpan ID produk ke input tersembunyi
+                    autocompleteResults.style.display = 'none';
+                });
+                autocompleteResults.appendChild(div);
+            });
+
+            if (suggestions.length > 0) {
+                autocompleteResults.style.display = 'block';
+            } else {
+                autocompleteResults.style.display = 'none';
+            }
+            });
+
+        document.addEventListener('click', function(event) {
+            if (!autocompleteResults.contains(event.target) && event.target !== searchInput) {
+                autocompleteResults.style.display = 'none';
+            }
         });
+    });
+    document.addEventListener("DOMContentLoaded", function() {
+        var form = document.getElementById('addStockoutForm');
+        form.addEventListener('submit', function(event) {
+            var availableProducts = @json($products);
+            var productIdInput = document.getElementById('product_id');
+            var product_name = document.getElementById('product_name').value;
+            var quantity = document.getElementById('quantity').value;
+            var description = document.getElementById('description').value;
 
-        if (suggestions.length > 0) {
-            autocompleteResults.style.display = 'block';
-        } else {
-            autocompleteResults.style.display = 'none';
-        }
+            if (product_name.trim() === '') {
+                event.preventDefault();
+                productNameError.innerText = 'Product Name is required.';
+                productNameError.style.display = 'block';
+            } else {
+                productNameError.innerText = '';
+                productNameError.style.display = 'none';
+            }
+
+            if (quantity.trim() === '') {
+                event.preventDefault();
+                quantityError.innerText = 'Quantity is required.';
+                quantityError.style.display = 'block';
+            } else if (quantity < 1) {
+                event.preventDefault();
+                quantityError.innerText = 'Quantity must be greater than 0.';
+                quantityError.style.display = 'block';
+            } else {
+                quantityError.innerText = '';
+                quantityError.style.display = 'none';
+            }
+            if (description.trim() === '') {
+                event.preventDefault();
+                descriptionError.innerText = 'Description is required.';
+                descriptionError.style.display = 'block';
+            } else {
+                descriptionError.innerText = '';
+                descriptionError.style.display = 'none';
+            }
+            var product = availableProducts.find(function(p) {
+                return p.name.toLowerCase() === product_name.toLowerCase();
+            });
+
+            if (product) {
+                productIdInput.value = product.id;
+            }
+            else{
+                productNameError.innerText = 'Invalid Product.';
+                productNameError.style.display = 'block';
+            }
+        });
     });
 
-    document.addEventListener('click', function(event) {
-        if (!autocompleteResults.contains(event.target) && event.target !== searchInput) {
-            autocompleteResults.style.display = 'none';
-        }
-    });
-});
 </script>
 @endsection

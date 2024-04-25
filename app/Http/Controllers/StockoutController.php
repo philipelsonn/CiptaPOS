@@ -18,11 +18,6 @@ class StockoutController extends Controller
     }
     public function store(Request $request)
     {
-        $request->validate([
-            'product_id' => 'required|exists:products,id',
-            'quantity' => 'required|integer|min:1',
-            'description' => 'required',
-        ]);
 
         // Buat entri baru dalam tabel stockout
         $stockout = Stockout::create([

@@ -40,16 +40,16 @@
                     <p style="grid-column: 1 / -1; text-align: center;">No product of category {{$selectedCategory}} is available</p>
                 @else
                     @foreach($products as $product)
-                        @if (request('q') === null || request('q') === '' || strpos(strtolower($product->name), strtolower(request('q'))) !== false)
-                            <div class="product" data-product-id="{{ $product->id }}" style="cursor: pointer; background-color: #fff; padding: 1rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    @if ($product->stock > 0 && (request('q') === null || request('q') === '' || strpos(strtolower($product->name), strtolower(request('q'))) !== false))
+                    <div class="product" data-product-id="{{ $product->id }}" style="cursor: pointer; background-color: #fff; padding: 1rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
                                 <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" style="width: 100%; height: 100px; object-fit: contain; border-radius: 0.25rem;">
                                 <h3 style="margin-top: 0.5rem; margin-bottom: 0.25rem; font-size: 1.25rem;">{{ $product->name }}</h3>
                                 <p id="product-price-discounted" style="margin-bottom: 0; font-size: 1rem;">
                                     @if ($product->discount > 0)
-                                        <del style="color: #6c757d;">Rp {{ $product->price }}</del><br>
-                                        <span style="font-weight: bold;">Rp {{ $product->price * (1 - ($product->discount / 100)) }}</span>
+                                        <del style="color: #6c757d;">Rp {{ number_format($product->price, 0, ',', '.') }}</del><br>
+                                        <span style="font-weight: bold;">Rp {{ number_format($product->price * (1 - ($product->discount / 100)), 0, ',', '.') }}</span>
                                     @else
-                                        <span style="font-weight: bold;">Rp {{ $product->price }} </span>
+                                        <span style="font-weight: bold;">Rp {{ number_format($product->price, 0, ',', '.') }} </span>
                                     @endif
                                 </p>
                                 <p class="stock" style="margin-bottom: 0; font-size: 1rem; font-weight: bold;">Stock: {{ $product->stock }}</p>
@@ -158,12 +158,12 @@
                         const priceText = productPriceElement.innerText.trim();
 
                         let productPrice;
-                        if (/^Rp \d+\nRp \d+$/.test(priceText)) {
-                            // Format: Rp 15000\nRp 14250
-                        productPrice = parseFloat(priceText.split('\n')[1].replace('Rp ', ''));
-                        } else if (/^Rp \d+$/.test(priceText)) {
-                            // Format: Rp 10000
-                            productPrice = parseFloat(priceText.replace('Rp ', ''));
+                        if (/^Rp \d+\.\d+\nRp \d+\.\d+$/.test(priceText)) {
+                            // Format: Rp 15.000\nRp 14.250
+                            productPrice = parseFloat(priceText.split('\n')[1].replace('Rp ', '').replace('.', ''));
+                        } else if (/^Rp \d+(\.\d+)?$/.test(priceText)) {
+                            // Format: Rp 10.000
+                            productPrice = parseFloat(priceText.replace('Rp ', '').replace('.', ''));
                         }
                         cart.push({ id: productId, name: productName, price: productPrice, quantity: 1, stock: stock });
                     }
@@ -234,7 +234,7 @@
 
                 const tdTotal = document.createElement('td');
                 const total = item.price * item.quantity;
-                tdTotal.textContent = `Rp ${total}`;
+                tdTotal.textContent = `Rp ${total.toLocaleString('id-ID')}`;
                 tdTotal.style.borderRight = '1px solid gray';
 
                 // Add the total price of this item to totalPrice
@@ -265,7 +265,7 @@
             });
 
             // Display the total price in the modal
-            document.getElementById('total-price').textContent = `Rp ${totalPrice}`;
+            document.getElementById('total-price').textContent = `Rp ${totalPrice.toLocaleString()}`;
         }
             // Render cart on page load
             renderCart();
