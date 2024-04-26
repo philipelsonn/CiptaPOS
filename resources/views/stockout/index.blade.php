@@ -16,10 +16,10 @@
                 <table id="myTable" class="table table-striped bg-light">
                     <thead>
                         <tr>
-                            <th class="text-center">ID</th>
-                            <th class="text-center">Description</th>
-                            <th class="text-center">Quantity</th>
-                            <th class="text-center">Action</th>
+                            <th class="col-md-1 text-center">ID</th>
+                            <th class="col-md-9 text-center">Description</th>
+                            <th class="col-md-2 text-center">Quantity</th>
+                            <th class="col-md-1 text-center">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -30,7 +30,7 @@
                                 <td class="align-middle text-center">{{ $stockout->description }}</td>
                                 <td class="align-middle text-center">{{ $stockout->quantity }}</td>
                                 <td class="align-middle text-center">
-                                    <div class="d-flex justify-content-center align-middle"> <!-- Tambah align-middle di sini -->
+                                    <div class="justify-content-center align-middle text-center"> <!-- Tambah align-middle di sini -->
                                         <form action="{{ route('stockout.destroy', $stockout->id) }}" method="POST">
                                             @csrf
                                             @method('DELETE')
