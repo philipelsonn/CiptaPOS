@@ -63,7 +63,7 @@
                             <div class="mb-3">
                                 <label for="name" class="form-label">{{ __('Name') }}</label>
                                 <input id="name" class="form-control" type="text" name="name" value="{{ $productCategory->name }}" required>
-                            </div>                        
+                            </div>
                         </div>
                         <div class="modal-footer">
                             @method('PUT')
@@ -82,13 +82,14 @@
                     <h5 class="modal-title" id="exampleModalLabel">Add Product Category</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form action="{{route('product-categories.store')}}" method="POST" enctype="multipart/form-data">
+                <form action="{{route('product-categories.store')}}" id="add-method"method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="modal-body">
                         <div class="mb-3">
                             <label for="name" class="form-label">{{ __('Name') }}</label>
                             <input id="name" class="form-control" type="text" name="name" required>
-                        </div>     
+                            <div id="name_error" class="text-danger"></div>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-primary">{{ __('Submit') }}</button>
@@ -97,4 +98,22 @@
             </div>
         </div>
     </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var addForm = document.getElementById('add-method');
+            addForm.addEventListener('submit', function(event) {
+                var category_name = addForm.querySelector('#name').value;
+                var existingProductCategories = {!! json_encode($productCategories->pluck('name')->toArray()) !!};
+                if (existingProductCategories.includes(category_name)) {
+                    event.preventDefault();
+                    name_error.innerText = 'Category name must be unique.';
+                    name_error.style.display = 'block';
+                }
+                else {
+                    name_error.innerText = '';
+                    name_error.style.display = 'none';
+                }
+            });
+        });
+    </script>
 @endsection
