@@ -8,6 +8,7 @@ use App\Models\TransactionDetail;
 use App\Models\Product;
 use App\Models\PaymentMethod;
 use App\Models\ProductCategory;
+use App\Models\SupplierTransaction;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -28,8 +29,13 @@ class TransactionController extends Controller
     {
         $transactionHeaders = TransactionHeader::with('transactionDetails')->get();
         $transactionDetails = TransactionDetail::all();
+        $supplierTransactions = SupplierTransaction::all();
         $totalRevenue = $transactionDetails->sum(function ($transactionDetail) {
             return $transactionDetail->price * $transactionDetail->quantity;
+        });
+
+        $totalOutcome = $supplierTransactions->sum(function ($supplierTransaction) {
+            return $supplierTransaction->price * $supplierTransaction->quantity;
         });
         $mostSoldProducts = TransactionDetail::select('product_id', DB::raw('SUM(quantity) as total_quantity'))
         ->whereHas('transactionHeader', function ($query) {
@@ -52,10 +58,8 @@ class TransactionController extends Controller
         ->orderByDesc('total_quantity')
         ->get();
 
-
-
         $transactionDetailsTop5 = TransactionDetail::orderByDesc(DB::raw('price * quantity'))->take(5)->get();
-        return view('products-and-transactions.transactionHistory',compact('transactionHeaders', 'transactionDetails', 'totalRevenue', 'mostSoldProducts', 'transactionDetailsTop5', 'mostSoldCategories'));
+        return view('products-and-transactions.transactionHistory',compact('transactionHeaders', 'transactionDetails', 'totalRevenue', 'mostSoldProducts', 'transactionDetailsTop5', 'mostSoldCategories', 'totalOutcome'));
     }
 
     public function store(Request $request)

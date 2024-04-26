@@ -57,8 +57,19 @@
                 </tbody>
             </table>
         </div>
-        <div class="mt-3">
-            <p class="fw-bold">Total revenue from all transactions: Rp {{ number_format($totalRevenue, 0, ',', '.') }}</p>
+        <div style="display: flex; justify-content: space-between; margin-top: 20px;">
+            <div style="text-align: center; flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 5px; background-color: #f9f9f9;">
+                <p style="font-weight: bold; margin-bottom: 5px;">Total Revenue</p>
+                <p style="font-size: 1.2em;">Rp {{ number_format($totalRevenue, 0, ',', '.') }}</p>
+            </div>
+            <div style="text-align: center; flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 5px; background-color: #f9f9f9;">
+                <p style="font-weight: bold; margin-bottom: 5px;">Total Outcome</p>
+                <p style="font-size: 1.2em;">Rp {{ number_format($totalOutcome, 0, ',', '.') }}</p>
+            </div>
+            <div style="text-align: center; flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 5px; background-color: #f9f9f9;">
+                <p style="font-weight: bold; margin-bottom: 5px;">Total Profits</p>
+                <p style="font-size: 1.2em;">Rp {{ number_format($totalRevenue - $totalOutcome, 0, ',', '.') }}</p>
+            </div>
         </div>
     </div>
     <div class="analytics" style="display: flex">

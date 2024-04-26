@@ -16,8 +16,8 @@
                     <thead>
                         <tr class="">
                             <th class="col-md-1 align-middle">ID</th>
-                            <th class="col-md-9 align-middle">Name</th>
-                            <th class="col-md-2 align-middle">Action</th>
+                            <th class="col-md-10 align-middle">Name</th>
+                            <th class="col-md-1 align-middle">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -27,9 +27,7 @@
                                 <td class="align-middle fw-bold">{{ $paymentMethod->id }}</td>
                                 <td class="align-middle">{{ $paymentMethod->name }}</td>
                                 <td class="align-middle">
-                                    <div class="d-flex">
-                                        <a class="btn btn-sm btn-warning me-2" data-bs-toggle="modal" data-bs-target="#update{{$paymentMethod->id}}">
-                                            <i class='far fa-edit'></i></a>
+                                    <div class="text-center">
                                         <form action="{{ route('payment-methods.destroy', $paymentMethod->id) }}" method="POST">
                                             @csrf
                                             @method('DELETE')
@@ -43,38 +41,10 @@
                             @php($i = $i + 1)
                         @endforeach
                     </tbody>
-                </table>    
+                </table>
             </div>
         </div>
     </div>
-
-    @foreach ($paymentMethods as $paymentMethod)
-        <div class="modal" id="update{{$paymentMethod->id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Update Payment Method</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <form action="{{ route('payment-methods.update', $paymentMethod->id)}}" method="POST" enctype="multipart/form-data">
-                        @csrf
-                        @method('UPDATE')
-                        <div class="modal-body">
-                            <div class="mb-3">
-                                <label for="name" class="form-label">{{ __('Name') }}</label>
-                                <input id="name" class="form-control" type="text" name="name" value="{{ $paymentMethod->name }}">
-                            </div>                        
-                        </div>
-                        <div class="modal-footer">
-                            @method('PUT')
-                            <button type="submit" class="btn btn-primary">{{ __('Save') }}</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    @endforeach
-
     <div class="modal" id="addPaymentMethod" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -82,13 +52,14 @@
                     <h5 class="modal-title" id="exampleModalLabel">Add Payment Method</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form action="{{route('payment-methods.store')}}" method="POST" enctype="multipart/form-data">
+                <form action="{{route('payment-methods.store')}}" id = "add-method" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="modal-body">
                         <div class="mb-3">
                             <label for="name" class="form-label">{{ __('Name') }}</label>
                             <input id="name" class="form-control" type="text" name="name" value="{{ old('name') }}" required>
-                        </div>     
+                            <div id="name_error" class="text-danger"></div>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-primary">{{ __('Submit') }}</button>
@@ -97,4 +68,22 @@
             </div>
         </div>
     </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var addForm = document.getElementById('add-method');
+            addForm.addEventListener('submit', function(event) {
+                var payment_name = addForm.querySelector('#name').value;
+                var existingPaymentMethods = {!! json_encode($paymentMethods->pluck('name')->toArray()) !!};
+                if (existingPaymentMethods.includes(payment_name)) {
+                    event.preventDefault();
+                    name_error.innerText = 'Payment Method name must be unique.';
+                    name_error.style.display = 'block';
+                }
+                else {
+                    name_error.innerText = '';
+                    name_error.style.display = 'none';
+                }
+            });
+        });
+    </script>
 @endsection
