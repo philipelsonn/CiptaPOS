@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'CiptaPOS | Manage Supplier Transactions')
+@section('title', 'CiptaPOS | Admin Dashboard')
 
 @section('content')
 

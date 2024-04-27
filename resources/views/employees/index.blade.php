@@ -64,7 +64,7 @@
                     <h5 class="modal-title" id="exampleModalLabel">Add Payment Method</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form action="{{ route('register') }}" method="POST" enctype="multipart/form-data">
+                <form id="myForm" action="{{ route('register') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="modal-body">
                         <div class="mb-3">
@@ -98,4 +98,84 @@
             </div>
         </div>
     </div>
+
+    <script>
+        $(document).ready(function () {
+            $('#myForm').submit(function (event) {
+                let isValid = true;
+    
+                $('.invalid-feedback').remove();
+                $('.has-error').removeClass('has-error');
+    
+                const nameInput = $('#name');
+                if (!nameInput.val().trim()) {
+                    showError(nameInput, 'Name is required');
+                    isValid = false;
+                } else {
+                    nameInput.removeClass('is-invalid');
+                }
+    
+                const emailInput = $('#email');
+                const existingEmails = {!! json_encode($employees->pluck('email')->toArray()) !!};
+                const newEmail = emailInput.val().trim();
+                if (!newEmail) {
+                    showError(emailInput, 'Email is required');
+                    isValid = false;
+                } else if (!isValidEmail(newEmail)) {
+                    showError(emailInput, 'Invalid email format');
+                    isValid = false;
+                } else if (existingEmails.includes(newEmail)) {
+                    showError(emailInput, 'Email already exists');
+                    isValid = false;
+                } else {
+                    emailInput.removeClass('is-invalid');
+                }
+    
+                const phoneNumberInput = $('#phone_number');
+                const existingPhoneNumbers = {!! json_encode($employees->pluck('phone_number')->toArray()) !!};
+                const newPhoneNumber = phoneNumberInput.val().trim();
+                if (!newPhoneNumber) {
+                    showError(phoneNumberInput, 'Phone number is required');
+                    isValid = false;
+                } else if (existingPhoneNumbers.includes(newPhoneNumber)) {
+                    showError(phoneNumberInput, 'Phone Number already exists');
+                    isValid = false;
+                } else {
+                    phoneNumberInput.removeClass('is-invalid');
+                }
+    
+                const salaryInput = $('#salary');
+                if (!salaryInput.val().trim()) {
+                    showError(salaryInput, 'Salary is required');
+                    isValid = false;
+                } else {
+                    salaryInput.removeClass('is-invalid');
+                }
+    
+                const typeSelect = $('#type');
+                if (!typeSelect.val().trim()) {
+                    showError(typeSelect, 'Type is required');
+                    isValid = false;
+                } else {
+                    typeSelect.removeClass('is-invalid');
+                }
+    
+                if (!isValid) {
+                    event.preventDefault();
+                }
+            });
+    
+            function showError(input, message) {
+                const formControl = input.parent();
+                const errorDiv = $('<div class="invalid-feedback"></div>').text(message);
+                formControl.append(errorDiv);
+                input.addClass('is-invalid');
+            }
+    
+            function isValidEmail(email) {
+                const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return re.test(email);
+            }
+        });
+    </script>        
 @endsection
