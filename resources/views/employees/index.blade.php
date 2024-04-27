@@ -36,8 +36,6 @@
                                 <td class="align-middle">{{ $employee->salary }}</td>
                                 <td class="align-middle">
                                     <div class="d-flex">
-                                        {{-- <a class="btn btn-sm btn-warning me-2" data-bs-toggle="modal" data-bs-target="#update{{$employee->id}}">
-                                            <i class='far fa-edit'></i></a> --}}
                                         <form action="{{ route('employees.destroy', $employee->id) }}" method="POST">
                                             @csrf
                                             @method('DELETE')
@@ -61,10 +59,10 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Add Payment Method</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Add Employee</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form id="myForm" action="{{ route('register') }}" method="POST" enctype="multipart/form-data">
+                <form id="addEmployeeForm" action="{{ route('register') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="modal-body">
                         <div class="mb-3">
@@ -101,27 +99,16 @@
 
     <script>
         $(document).ready(function () {
-            $('#myForm').submit(function (event) {
+            $('#addEmployeeForm').submit(function (event) {
                 let isValid = true;
     
                 $('.invalid-feedback').remove();
                 $('.has-error').removeClass('has-error');
     
-                const nameInput = $('#name');
-                if (!nameInput.val().trim()) {
-                    showError(nameInput, 'Name is required');
-                    isValid = false;
-                } else {
-                    nameInput.removeClass('is-invalid');
-                }
-    
                 const emailInput = $('#email');
                 const existingEmails = {!! json_encode($employees->pluck('email')->toArray()) !!};
                 const newEmail = emailInput.val().trim();
-                if (!newEmail) {
-                    showError(emailInput, 'Email is required');
-                    isValid = false;
-                } else if (!isValidEmail(newEmail)) {
+                if (!isValidEmail(newEmail)) {
                     showError(emailInput, 'Invalid email format');
                     isValid = false;
                 } else if (existingEmails.includes(newEmail)) {
@@ -134,32 +121,23 @@
                 const phoneNumberInput = $('#phone_number');
                 const existingPhoneNumbers = {!! json_encode($employees->pluck('phone_number')->toArray()) !!};
                 const newPhoneNumber = phoneNumberInput.val().trim();
-                if (!newPhoneNumber) {
-                    showError(phoneNumberInput, 'Phone number is required');
-                    isValid = false;
-                } else if (existingPhoneNumbers.includes(newPhoneNumber)) {
+                if (existingPhoneNumbers.includes(newPhoneNumber)) {
                     showError(phoneNumberInput, 'Phone Number already exists');
+                    isValid = false;
+                } else if (!/^\d+$/.test(newPhoneNumber)) {
+                    showError(phoneNumberInput, 'Phone number must contain only numbers');
                     isValid = false;
                 } else {
                     phoneNumberInput.removeClass('is-invalid');
                 }
-    
+                
                 const salaryInput = $('#salary');
-                if (!salaryInput.val().trim()) {
-                    showError(salaryInput, 'Salary is required');
+                const salary = parseInt(salaryInput.val().trim());
+                if (!salary || salary <= 0) {
+                    showError(salaryInput, 'Salary must be a positive integer');
                     isValid = false;
-                } else {
-                    salaryInput.removeClass('is-invalid');
                 }
-    
-                const typeSelect = $('#type');
-                if (!typeSelect.val().trim()) {
-                    showError(typeSelect, 'Type is required');
-                    isValid = false;
-                } else {
-                    typeSelect.removeClass('is-invalid');
-                }
-    
+
                 if (!isValid) {
                     event.preventDefault();
                 }

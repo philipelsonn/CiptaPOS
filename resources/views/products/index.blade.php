@@ -90,7 +90,7 @@
                             </div>
                             <div class="mb-3">
                                 <label for="price" class="form-label">{{ __('Price') }}</label>
-                                <input id="price" class="form-control" type="number" name="price" value="{{ $product->price }}">
+                                <input id="price" class="form-control" type="number" name="price" value="{{ $product->price }}" required min="1">
                             </div>
                             <div class="mb-3">
                                 <label for="category_id" class="form-label">{{ __('Category') }}</label>
@@ -106,7 +106,7 @@
                             </div>
                             <div class="mb-3">
                                 <label for="discount" class="form-label">{{ __('Discount') }}</label>
-                                <input id="discount" class="form-control" type="number" name="discount" value="{{ $product->discount }}">
+                                <input id="discount" class="form-control" type="number" name="discount" value="{{ $product->discount }}" required min="0">
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -158,7 +158,7 @@
                                 </div>
                                 <div class="mb-3">
                                     <label for="discount" class="form-label">{{ __('Discount') }}</label>
-                                    <input id="discount" class="form-control" type="number" name="discount" value="{{ old('discount') ? trim(old('discount')) : '' }}" required>
+                                    <input id="discount" class="form-control" type="number" name="discount" value="{{ old('discount') ? trim(old('discount')) : '' }}" required min="0">
                                 </div>
                             </div>
                         </div>
@@ -167,11 +167,11 @@
                                 <!-- Pricing Fields -->
                                 <div class="mb-3">
                                     <label for="price" class="form-label">{{ __('Price') }}</label>
-                                    <input id="price" class="form-control" type="number" name="price" value="{{ old('price') ? trim(old('price')) : '' }}" required>
+                                    <input id="price" class="form-control" type="number" name="price" value="{{ old('price') ? trim(old('price')) : '' }}" required min="1">
                                 </div>
                                 <div class="mb-3">
                                     <label for="initial_stock" class="form-label">{{ __('Initial Stock') }}</label>
-                                    <input id="initial_stock" class="form-control" type="number" name="initial_stock" value="{{ old('initial_stock') ? trim(old('initial_stock')) : '' }}" required>
+                                    <input id="initial_stock" class="form-control" type="number" name="initial_stock" value="{{ old('initial_stock') ? trim(old('initial_stock')) : '' }}" required min="1">
                                 </div>
                                 <div class="mb-3">
                                     <label for="supplier_id" class="form-label">{{ __('Supplier') }}</label>
@@ -186,7 +186,7 @@
                                 </div>
                                 <div class="mb-3">
                                     <label for="price_per_piece" class="form-label">{{ __('Price per Piece') }}</label>
-                                    <input id="price_per_piece" class="form-control" type="number" name="price_per_piece" value="{{ old('price_per_piece') ? trim(old('price_per_piece')) : '' }}" required>
+                                    <input id="price_per_piece" class="form-control" type="number" name="price_per_piece" value="{{ old('price_per_piece') ? trim(old('price_per_piece')) : '' }}" required min="1">
                                 </div>
                             </div>
                         </div>
