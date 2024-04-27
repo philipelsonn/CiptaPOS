@@ -54,9 +54,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::middleware(['check.admin'])->group(function () {
         //Employees
-        Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-        Route::post('register', [RegisteredUserController::class, 'store'])->name('employee.add');
-        Route::post('employee', [RegisteredUserController::class, 'destroy'])->name('employees.destroy');
+        Route::delete('/employees/{employee}', [ProfileController::class, 'destroy'])->name('employees.destroy');
+        Route::post('register', [RegisteredUserController::class, 'store'])->name('employees.add');
         Route::get('/employees', [ProfileController::class, 'index'])->name('employees.index');
 
         Route::resource('products', ProductController::class)->except(['create', 'edit', 'show']);

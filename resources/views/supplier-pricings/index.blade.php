@@ -90,7 +90,7 @@
                             </div>
                             <div class="mb-3">
                                 <label for="price" class="form-label">{{ __('Price') }}</label>
-                                <input id="price" class="form-control" type="number" name="price" value="{{ $supplierPricing->price }}" required>
+                                <input id="price" class="form-control" type="number" name="price" value="{{ $supplierPricing->price }}" required min="1">
                             </div>  
                         </div>
                         <div class="modal-footer">
@@ -139,7 +139,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="price" class="form-label">{{ __('Price') }}</label>
-                            <input id="price" class="form-control" type="number" name="price" value="{{ old('price') }}" required>
+                            <input id="price" class="form-control" type="number" name="price" value="{{ old('price') }}" required min="0">
                         </div>  
                     </div>
                     <div class="modal-footer">

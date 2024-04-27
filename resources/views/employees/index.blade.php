@@ -36,8 +36,6 @@
                                 <td class="align-middle">{{ $employee->salary }}</td>
                                 <td class="align-middle">
                                     <div class="d-flex">
-                                        {{-- <a class="btn btn-sm btn-warning me-2" data-bs-toggle="modal" data-bs-target="#update{{$employee->id}}">
-                                            <i class='far fa-edit'></i></a> --}}
                                         <form action="{{ route('employees.destroy', $employee->id) }}" method="POST">
                                             @csrf
                                             @method('DELETE')
@@ -61,10 +59,10 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Add Payment Method</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Add Employee</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form action="{{ route('register') }}" method="POST" enctype="multipart/form-data">
+                <form id="addEmployeeForm" action="{{ route('register') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="modal-body">
                         <div class="mb-3">
@@ -98,4 +96,64 @@
             </div>
         </div>
     </div>
+
+    <script>
+        $(document).ready(function () {
+            $('#addEmployeeForm').submit(function (event) {
+                let isValid = true;
+    
+                $('.invalid-feedback').remove();
+                $('.has-error').removeClass('has-error');
+    
+                const emailInput = $('#email');
+                const existingEmails = {!! json_encode($employees->pluck('email')->toArray()) !!};
+                const newEmail = emailInput.val().trim();
+                if (!isValidEmail(newEmail)) {
+                    showError(emailInput, 'Invalid email format');
+                    isValid = false;
+                } else if (existingEmails.includes(newEmail)) {
+                    showError(emailInput, 'Email already exists');
+                    isValid = false;
+                } else {
+                    emailInput.removeClass('is-invalid');
+                }
+    
+                const phoneNumberInput = $('#phone_number');
+                const existingPhoneNumbers = {!! json_encode($employees->pluck('phone_number')->toArray()) !!};
+                const newPhoneNumber = phoneNumberInput.val().trim();
+                if (existingPhoneNumbers.includes(newPhoneNumber)) {
+                    showError(phoneNumberInput, 'Phone Number already exists');
+                    isValid = false;
+                } else if (!/^\d+$/.test(newPhoneNumber)) {
+                    showError(phoneNumberInput, 'Phone number must contain only numbers');
+                    isValid = false;
+                } else {
+                    phoneNumberInput.removeClass('is-invalid');
+                }
+                
+                const salaryInput = $('#salary');
+                const salary = parseInt(salaryInput.val().trim());
+                if (!salary || salary <= 0) {
+                    showError(salaryInput, 'Salary must be a positive integer');
+                    isValid = false;
+                }
+
+                if (!isValid) {
+                    event.preventDefault();
+                }
+            });
+    
+            function showError(input, message) {
+                const formControl = input.parent();
+                const errorDiv = $('<div class="invalid-feedback"></div>').text(message);
+                formControl.append(errorDiv);
+                input.addClass('is-invalid');
+            }
+    
+            function isValidEmail(email) {
+                const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return re.test(email);
+            }
+        });
+    </script>        
 @endsection

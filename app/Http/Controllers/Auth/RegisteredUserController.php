@@ -51,6 +51,6 @@ class RegisteredUserController extends Controller
 
         event(new Registered($user));
 
-        return redirect()->route("employee.index");
+        return redirect()->route("employees.index");
     }
 }
