@@ -92,7 +92,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="quantity" class="form-label">{{ __('Quantity') }}</label>
-                            <input id="quantity" class="form-control" type="number" name="quantity" value="{{ old('quantity') }}" required>
+                            <input id="quantity" class="form-control" type="number" name="quantity" value="{{ old('quantity') }}" required min="1">
                         </div>
                     </div>
                     <div class="modal-footer">

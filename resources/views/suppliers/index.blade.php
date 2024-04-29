@@ -71,27 +71,22 @@
                             <div class="mb-3">
                                 <label for="company_name" class="form-label">{{ __('Company') }}</label>
                                 <input id="company_name{{$supplier->id}}" class="form-control" type="text" name="company_name" value="{{ $supplier->company_name }}">
-                                <div id="company_name_error{{$supplier->id}}" class="text-danger"></div>
                             </div>
                             <div class="mb-3">
                                 <label for="company_address" class="form-label">{{ __('Address') }}</label>
                                 <input id="company_address{{$supplier->id}}" class="form-control" type="text" name="company_address" value="{{ $supplier->company_address }}">
-                                <div id="company_address_error{{$supplier->id}}" class="text-danger"></div>
                             </div>
                             <div class="mb-3">
                                 <label for="pic_name" class="form-label">{{ __('PIC') }}</label>
                                 <input id="pic_name{{$supplier->id}}" class="form-control" type="text" name="pic_name" value="{{ $supplier->pic_name }}">
-                                <div id="pic_name_error{{$supplier->id}}" class="text-danger"></div>
                             </div>
                             <div class="mb-3">
                                 <label for="pic_phone" class="form-label">{{ __('Phone') }}</label>
                                 <input id="pic_phone{{$supplier->id}}" class="form-control" type="text" name="pic_phone" value="{{ $supplier->pic_phone }}">
-                                <div id="pic_phone_error{{$supplier->id}}" class="text-danger"></div>
                             </div>
                             <div class="mb-3">
                                 <label for="pic_email" class="form-label">{{ __('Email') }}</label>
                                 <input id="pic_email{{$supplier->id}}" class="form-control" type="text" name="pic_email" value="{{ $supplier->pic_email }}">
-                                <div id="pic_email_error{{$supplier->id}}" class="text-danger"></div>
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -117,27 +112,22 @@
                         <div class="mb-3">
                             <label for="company_name" class="form-label">{{ __('Company') }}</label>
                             <input id="company_name" class="form-control" type="text" name="company_name" value="{{ old('company_name') }}" required>
-                            <div id="company_name_error" class="text-danger"></div>
                         </div>
                         <div class="mb-3">
                             <label for="company_address" class="form-label">{{ __('Address') }}</label>
                             <input id="company_address" class="form-control" type="text" name="company_address" value="{{ old('company_address') }}" required>
-                            <div id="company_address_error" class="text-danger"></div>
                         </div>
                         <div class="mb-3">
                             <label for="pic_name" class="form-label">{{ __('PIC') }}</label>
                             <input id="pic_name" class="form-control" type="text" name="pic_name" value="{{ old('pic_name') }}" required>
-                            <div id="pic_name_error" class="text-danger"></div>
                         </div>
                         <div class="mb-3">
                             <label for="pic_phone" class="form-label">{{ __('Phone') }}</label>
                             <input id="pic_phone" class="form-control" type="text" name="pic_phone" value="{{ old('pic_phone') }}" required>
-                            <div id="pic_phone_error" class="text-danger"></div>
                         </div>
                         <div class="mb-3">
                             <label for="pic_email" class="form-label">{{ __('Email') }}</label>
                             <input id="pic_email" class="form-control" type="text" name="pic_email" value="{{ old('pic_email') }}" required>
-                            <div id="pic_email_error" class="text-danger"></div>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -148,132 +138,133 @@
         </div>
     </div>
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            var addForm = document.getElementById('addSupplierForm');
-            addForm.addEventListener('submit', function(event) {
-                var company_name = addForm.querySelector('#company_name').value;
-                var company_address = addForm.querySelector('#company_address').value;
-                var pic_name = addForm.querySelector('#pic_name').value;
-                var pic_phone = addForm.querySelector('#pic_phone').value;
-                var pic_email = addForm.querySelector('#pic_email').value;
-                var existingCompanyNames = {!! json_encode($suppliers->pluck('company_name')->toArray()) !!};
-                if (existingCompanyNames.includes(company_name)) {
-                    event.preventDefault();
-                    company_name_error.innerText = 'Company Name must be unique.';
-                    company_name_error.style.display = 'block';
-                } else if(company_name.trim().length < 8){
-                    company_name_error.innerText = 'Company Name must be at least 8 characters.';
-                    company_name_error.style.display = 'block';
-                }
-                else {
-                    company_name_error.innerText = '';
-                    company_name_error.style.display = 'none';
-                }
-                if (company_address.trim().length < 8) {
-                    event.preventDefault();
-                    company_address_error.innerText = 'Address must be at least 8 characters.';
-                    company_address_error.style.display = 'block';
-                } else {
-                    company_address_error.innerText = '';
-                    company_address_error.style.display = 'none';
-                }
+    function showError(input, message) {
+        const formControl = input.parent();
+        const errorDiv = $('<div class="invalid-feedback"></div>').text(message);
+        formControl.append(errorDiv);
+        input.addClass('is-invalid');
+    }
+    $(document).ready(function() {
+        $('#addSupplierForm').submit(function(event) {
+            let isValid = true;
 
-                if (pic_name.trim().length < 8) {
-                    event.preventDefault();
-                    pic_name_error.innerText = 'PIC Name must be at least 8 characters.';
-                    pic_name_error.style.display = 'block';
-                } else {
-                    pic_name_error.innerText = '';
-                    ic_name_error.style.display = 'none';
-                }
+            $('.invalid-feedback').remove();
+            $('.has-error').removeClass('has-error');
 
+            const company_name = $('#company_name');
+            const company_address = $('#company_address');
+            const pic_name = $('#pic_name');
+            const pic_phone = $('#pic_phone');
+            const pic_email = $('#pic_email');
+            const existingCompanyNames = {!! json_encode($suppliers->pluck('company_name')->toArray()) !!};
 
-                if (!/^\d+$/.test(pic_phone.trim())) {
-                    event.preventDefault();
-                    pic_phone_error.innerText = 'Phone number must only include numbers.';
-                    pic_phone_error.style.display = 'block';
-                } else {
-                    pic_phone_error.innerText = '';
-                    pic_phone_error.style.display = 'none';
-                }
+            if (existingCompanyNames.includes(company_name.val().trim())) {
+                showError(company_name, 'Company Name must be unique.');
+                isValid = false;
+            } else if (company_name.val().trim().length < 8) {
+                showError(company_name, 'Company Name must be at least 8 characters.');
+                isValid = false;
+            }
+            else{
+                company_name.removeClass('is-invalid');
+            }
 
-                if (!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(pic_email.trim())) {
-                    event.preventDefault();
-                    pic_email_error.innerText = 'Invalid email format.';
-                    pic_email_error.style.display = 'block';
-                } else {
-                    pic_email_error.innerText = '';
-                    pic_email_error.style.display = 'none';
-                }
-            });
+            if (company_address.val().trim().length < 8) {
+                showError(company_address, 'Address must be at least 8 characters.');
+                isValid = false;
+            }
+            else{
+                company_address.removeClass('is-invalid');
+            }
+
+            if (pic_name.val().trim().length < 8) {
+                showError(pic_name, 'PIC Name must be at least 8 characters.');
+                isValid = false;
+            }
+            else{
+                pic_name.removeClass('is-invalid');
+            }
+
+            if (!/^\d+$/.test(pic_phone.val().trim())) {
+                showError(pic_phone, 'Phone number must only include numbers.');
+                isValid = false;
+            }
+            else if(pic_phone.val().length < 8 ){
+                showError(pic_phone, 'Phone number length must be 8 characters or above.');
+                isValid = false;
+            }
+            else{
+                pic_phone.removeClass('is-invalid');
+            }
+            if (!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(pic_email.val().trim())) {
+                showError(pic_email, 'Invalid email format.');
+                isValid = false;
+            }
+            else {
+                pic_email.removeClass('is-invalid');
+            }
+            if (!isValid) {
+                event.preventDefault();
+            }
         });
+    });
 
-        document.addEventListener("DOMContentLoaded", function() {
-        var updateForms = document.querySelectorAll('[id^="updateFormSupplier"]');
-        updateForms.forEach(function(updateForm) {
-            updateForm.addEventListener('submit', function(event) {
-                var id = updateForm.id.split('updateFormSupplier')[1];
-                var company_name = updateForm.querySelector('#company_name'+id).value;
-                var company_address = updateForm.querySelector('#company_address'+id).value;
-                var pic_name = updateForm.querySelector('#pic_name'+id).value;
-                var pic_phone = updateForm.querySelector('#pic_phone'+id).value;
-                var pic_email = updateForm.querySelector('#pic_email'+id).value;
 
-                var company_name_error = updateForm.querySelector('#company_name_error'+id);
-                var company_address_error = updateForm.querySelector('#company_address_error'+id);
-                var pic_name_error = updateForm.querySelector('#pic_name_error'+id);
-                var pic_phone_error = updateForm.querySelector('#pic_phone_error'+id);
-                var pic_email_error = updateForm.querySelector('#pic_email_error'+id);
+    $(document).ready(function() {
+        $('[id^="updateFormSupplier"]').submit(function(event) {
+            let isValid = true;
 
-                // Validasi company_name
-                if (company_name.trim().length < 8) {
-                    event.preventDefault();
-                    company_name_error.innerText = 'Company Name must be at least 8 characters.';
-                    company_name_error.style.display = 'block';
-                } else {
-                    company_name_error.innerText = '';
-                    company_name_error.style.display = 'none';
-                }
+            $('.invalid-feedback').remove();
+            $('.is-invalid').removeClass('is-invalid');
 
-                // Validasi company_address
-                if (company_address.trim().length < 8) {
-                    event.preventDefault();
-                    company_address_error.innerText = 'Address must be at least 8 characters.';
-                    company_address_error.style.display = 'block';
-                } else {
-                    company_address_error.innerText = '';
-                    company_address_error.style.display = 'none';
-                }
+            const updateForm = $(this);
+            const id = updateForm.attr('id').replace('updateFormSupplier', '');
+            const company_name = updateForm.find('#company_name'+id);
+            const company_address = updateForm.find('#company_address'+id);
+            const pic_name = updateForm.find('#pic_name'+id);
+            const pic_phone = updateForm.find('#pic_phone'+id);
+            const pic_email = updateForm.find('#pic_email'+id);
+            if (company_name.val().trim().length < 8) {
+                showError(company_name, 'Company Name must be at least 8 characters.');
+                isValid = false;
+            } else {
+                company_name.removeClass('is-invalid');
+            }
 
-                // Validasi pic_name
-                if (pic_name.trim().length < 8) {
-                    event.preventDefault();
-                    pic_name_error.innerText = 'PIC Name must be at least 8 characters.';
-                    pic_name_error.style.display = 'block';
-                } else {
-                    pic_name_error.innerText = '';
-                    pic_name_error.style.display = 'none';
-                }
+            if (company_address.val().trim().length < 8) {
+                showError(company_address, 'Address must be at least 8 characters.');
+                isValid = false;
+            } else {
+                company_address.removeClass('is-invalid');
+            }
 
-                if (!/^\d+$/.test(pic_phone.trim())) {
-                    event.preventDefault();
-                    pic_phone_error.innerText = 'Phone number must only include numbers.';
-                    pic_phone_error.style.display = 'block';
-                } else {
-                    pic_phone_error.innerText = '';
-                    pic_phone_error.style.display = 'none';
-                }
+            if (pic_name.val().trim().length < 8) {
+                showError(pic_name, 'PIC Name must be at least 8 characters.');
+                isValid = false;
+            } else {
+                pic_name.removeClass('is-invalid');
+            }
 
-                // Validasi pic_email
-                if (!/^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/.test(pic_email.trim())) {
-                    event.preventDefault();
-                    pic_email_error.innerText = 'Invalid email format.';
-                    pic_email_error.style.display = 'block';
-                } else {
-                    pic_email_error.innerText = '';
-                    pic_email_error.style.display = 'none';
-                }
-            });
+            if (!/^\d+$/.test(pic_phone.val().trim())) {
+                showError(pic_phone, 'Phone number must only include numbers.');
+                isValid = false;
+            } else if (pic_phone.val().trim().length < 8) {
+                showError(pic_phone, 'Phone number length must be 8 characters or above.');
+                isValid = false;
+            } else {
+                pic_phone.removeClass('is-invalid');
+            }
+
+            if (!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(pic_email.val().trim())) {
+                showError(pic_email, 'Invalid email format.');
+                isValid = false;
+            } else {
+                pic_email.removeClass('is-invalid');
+            }
+
+            if (!isValid) {
+                event.preventDefault();
+            }
         });
     });
     </script>

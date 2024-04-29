@@ -71,12 +71,10 @@
                         <div class="mt-3">
                             <label for="quantity" class="form-label">Quantity</label>
                             <input id="quantity"name= "quantity" class="form-control form-control-sm" type="number" placeholder="Quantity" required>
-                            <div id="quantityError" class="text-danger" style="display: none;"></div>
                         </div>
                         <div class="mt-3">
                             <label for="description" class="form-label">Description</label>
                             <textarea id="description" name= "description" class="form-control form-control-sm" placeholder="Description" required></textarea>
-                            <div id="descriptionError" class="text-danger" style="display: none;"></div>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -125,57 +123,68 @@
             }
         });
     });
-    document.addEventListener("DOMContentLoaded", function() {
-        var form = document.getElementById('addStockoutForm');
-        form.addEventListener('submit', function(event) {
-            var availableProducts = @json($products);
+    $(document).ready(function () {
+        $('#addStockoutForm').submit(function (event) {
+            let isValid = true;
+
+            $('.invalid-feedback').remove();
+            $('.has-error').removeClass('has-error');
+
+            const quantityInput = $('#quantity');
+            const productName = $('#product_name')
+            const description = $('#description');
+            const existingProductNames = {!! json_encode($products->pluck('name')->toArray()) !!};
             var productIdInput = document.getElementById('product_id');
-            var product_name = document.getElementById('product_name').value;
-            var quantity = document.getElementById('quantity').value;
-            var description = document.getElementById('description').value;
-
-            if (product_name.trim() === '') {
-                event.preventDefault();
-                productNameError.innerText = 'Product Name is required.';
-                productNameError.style.display = 'block';
-            } else {
-                productNameError.innerText = '';
-                productNameError.style.display = 'none';
+            console.log(existingProductNames);
+            console.log(productName.val());
+            if (productName.val().trim() !== '') {
+                if (existingProductNames.includes(productName.val())) {
+                    var availableProducts = @json($products);
+                    var product = availableProducts.find(function(p) {
+                        return p.name.toLowerCase() === productName.val().toLowerCase();
+                    });
+                    if (product) {
+                        productIdInput.value = product.id;
+                        productName.removeClass('is-invalid');
+                    } else {
+                        showError(productName, 'Product name is unavailable in the database');
+                        isValid = false;
+                    }
+                }
+                else {
+                    showError(productName, 'Product name is unavailable in the database');
+                    isValid = false;
+                }
             }
 
-            if (quantity.trim() === '') {
-                event.preventDefault();
-                quantityError.innerText = 'Quantity is required.';
-                quantityError.style.display = 'block';
-            } else if (quantity < 1) {
-                event.preventDefault();
-                quantityError.innerText = 'Quantity must be greater than 0.';
-                quantityError.style.display = 'block';
-            } else {
-                quantityError.innerText = '';
-                quantityError.style.display = 'none';
-            }
-            if (description.trim() === '') {
-                event.preventDefault();
-                descriptionError.innerText = 'Description is required.';
-                descriptionError.style.display = 'block';
-            } else {
-                descriptionError.innerText = '';
-                descriptionError.style.display = 'none';
-            }
-            var product = availableProducts.find(function(p) {
-                return p.name.toLowerCase() === product_name.toLowerCase();
+                if (parseInt(quantityInput.val()) <= 0){
+                    showError(quantityInput, 'Quantity must be at least one or more')
+                    isValid = false;
+                }
+                else{
+                    quantityInput.removeClass('is-invalid');
+
+                }
+                if (description.val().length < 5){
+                    showError(description, 'Description length must be at least 5 characters')
+                    isValid = false;
+                }
+                else {
+                    description.removeClass('is-invalid');
+                }
+
+                if (!isValid) {
+                    event.preventDefault();
+                }
             });
 
-            if (product) {
-                productIdInput.value = product.id;
-            }
-            else{
-                productNameError.innerText = 'Invalid Product.';
-                productNameError.style.display = 'block';
+            function showError(input, message) {
+                const formControl = input.parent();
+                const errorDiv = $('<div class="invalid-feedback"></div>').text(message);
+                formControl.append(errorDiv);
+                input.addClass('is-invalid');
             }
         });
-    });
 
 </script>
 @endsection
