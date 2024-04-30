@@ -52,13 +52,12 @@
                     <h5 class="modal-title" id="exampleModalLabel">Add Payment Method</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form action="{{route('payment-methods.store')}}" id = "add-method" method="POST" enctype="multipart/form-data">
+                <form action="{{route('payment-methods.store')}}" id = "add-payment-method" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="modal-body">
                         <div class="mb-3">
                             <label for="name" class="form-label">{{ __('Name') }}</label>
                             <input id="name" class="form-control" type="text" name="name" value="{{ old('name') }}" required>
-                            <div id="name_error" class="text-danger"></div>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -69,21 +68,34 @@
         </div>
     </div>
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            var addForm = document.getElementById('add-method');
-            addForm.addEventListener('submit', function(event) {
-                var payment_name = addForm.querySelector('#name').value;
-                var existingPaymentMethods = {!! json_encode($paymentMethods->pluck('name')->toArray()) !!};
-                if (existingPaymentMethods.includes(payment_name)) {
-                    event.preventDefault();
-                    name_error.innerText = 'Payment Method name must be unique.';
-                    name_error.style.display = 'block';
+        $(document).ready(function () {
+            $('#add-payment-method').submit(function (event) {
+                let isValid = true;
+
+                $('.invalid-feedback').remove();
+                $('.has-error').removeClass('has-error');
+
+                const nameInput = $('#name');
+                const existingNames = {!! json_encode($paymentMethods->pluck('name')->toArray()) !!};
+                console.log(existingNames);
+                if (existingNames.includes(nameInput.val())) {
+                    showError(nameInput, 'Payment Method already exists');
+                    isValid = false;
                 }
                 else {
-                    name_error.innerText = '';
-                    name_error.style.display = 'none';
+                    nameInput.removeClass('is-invalid');
+                }
+                if (!isValid) {
+                    event.preventDefault();
                 }
             });
+
+            function showError(input, message) {
+                const formControl = input.parent();
+                const errorDiv = $('<div class="invalid-feedback"></div>').text(message);
+                formControl.append(errorDiv);
+                input.addClass('is-invalid');
+            }
         });
     </script>
 @endsection

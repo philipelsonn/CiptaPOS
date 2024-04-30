@@ -16,14 +16,14 @@
                     <thead>
                         <tr class="">
                             <th class="col-md-1 align-middle">ID</th>
-                            <th class="col-md-9 align-middle">Name</th>
-                            <th class="col-md-9 align-middle">Description</th>
-                            <th class="col-md-9 align-middle">Image</th>
-                            <th class="col-md-9 align-middle">Price</th>
-                            <th class="col-md-9 align-middle">Category</th>
-                            <th class="col-md-9 align-middle">Stock</th>
-                            <th class="col-md-9 align-middle">Discount</th>
-                            <th class="col-md-2 align-middle">Action</th>
+                            <th class="col-md-2 align-middle">Name</th>
+                            <th class="col-md-2 align-middle">Description</th>
+                            <th class="col-md-1 align-middle">Image</th>
+                            <th class="col-md-2 align-middle">Price</th>
+                            <th class="col-md-1 align-middle">Category</th>
+                            <th class="col-md-1 align-middle">Stock</th>
+                            <th class="col-md-1 align-middle">Discount</th>
+                            <th class="col-md-1 align-middle">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -36,7 +36,7 @@
                                 <td class="align-middle">
                                     <img src="{{ asset('storage/'.$product->image) }}" alt="{{ $product->name }} image" style="max-height: 40px;">
                                 </td>
-                                <td class="align-middle">{{ $product->price }}</td>
+                                <td class="align-middle">Rp {{ number_format($product->price, 0, ',', '.') }}</td>
                                 <td class="align-middle">{{ $product->productCategory->name }}</td>
                                 <td class="align-middle">{{ $product->stock }}</td>
                                 <td class="align-middle">{{ $product->discount }}</td>

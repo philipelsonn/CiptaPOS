@@ -15,13 +15,16 @@ class SupplierTransactionController extends Controller
      */
     public function index()
     {
-        return view('supplier-transactions.index',[
-            'products' => Product::all(),
-            'suppliers' => Supplier::all(),
-            'supplierPricings' => SupplierPricing::all(),
-            'supplierTransactions' => SupplierTransaction::all(),
-        ]);
+        $products = Product::all();
+        $suppliers = Supplier::all();
+
+        $supplierPricings = SupplierPricing::with('product', 'supplier')->get();
+
+        $supplierTransactions = SupplierTransaction::all();
+
+        return view('supplier-transactions.index', compact('products', 'suppliers', 'supplierPricings', 'supplierTransactions'));
     }
+
 
     /**
      * Store a newly created resource in storage.

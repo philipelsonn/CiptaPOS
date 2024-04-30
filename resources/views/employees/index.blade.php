@@ -16,12 +16,12 @@
                     <thead>
                         <tr class="">
                             <th class="col-md-1 align-middle">ID</th>
-                            <th class="col-md-9 align-middle">Name</th>
-                            <th class="col-md-9 align-middle">Email</th>
-                            <th class="col-md-9 align-middle">Phone</th>
-                            <th class="col-md-9 align-middle">Type</th>
-                            <th class="col-md-9 align-middle">Salary</th>
-                            <th class="col-md-2 align-middle">Action</th>
+                            <th class="col-md-3 align-middle">Name</th>
+                            <th class="col-md-3 align-middle">Email</th>
+                            <th class="col-md-1 align-middle">Phone</th>
+                            <th class="col-md-1 align-middle">Type</th>
+                            <th class="col-md-2 align-middle">Salary</th>
+                            <th class="col-md-1 align-middle">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -33,7 +33,7 @@
                                 <td class="align-middle">{{ $employee->email }}</td>
                                 <td class="align-middle">{{ $employee->phone_number }}</td>
                                 <td class="align-middle">{{ $employee->type }}</td>
-                                <td class="align-middle">{{ $employee->salary }}</td>
+                                <td class="align-middle">Rp {{ number_format($employee->salary, 0, ',', '.') }}</td>
                                 <td class="align-middle">
                                     <div class="d-flex">
                                         <form action="{{ route('employees.destroy', $employee->id) }}" method="POST">
@@ -49,7 +49,7 @@
                             @php($i = $i + 1)
                         @endforeach
                     </tbody>
-                </table>   
+                </table>
             </div>
 
         </div>
@@ -68,7 +68,7 @@
                         <div class="mb-3">
                             <label for="name" class="form-label">{{ __('Name') }}</label>
                             <input id="name" class="form-control" type="text" name="name" value="{{ old('name') }}" required autofocus autocomplete="name" />
-                        </div>     
+                        </div>
                         <div class="mb-3">
                             <label for="email" class="form-label">{{ __('Email') }}</label>
                             <input id="email" class="form-control" type="email" name="email" value="{{ old('email') }}" required autocomplete="username" />
@@ -101,10 +101,10 @@
         $(document).ready(function () {
             $('#addEmployeeForm').submit(function (event) {
                 let isValid = true;
-    
+
                 $('.invalid-feedback').remove();
                 $('.has-error').removeClass('has-error');
-    
+
                 const emailInput = $('#email');
                 const existingEmails = {!! json_encode($employees->pluck('email')->toArray()) !!};
                 const newEmail = emailInput.val().trim();
@@ -117,7 +117,7 @@
                 } else {
                     emailInput.removeClass('is-invalid');
                 }
-    
+
                 const phoneNumberInput = $('#phone_number');
                 const existingPhoneNumbers = {!! json_encode($employees->pluck('phone_number')->toArray()) !!};
                 const newPhoneNumber = phoneNumberInput.val().trim();
@@ -130,30 +130,33 @@
                 } else {
                     phoneNumberInput.removeClass('is-invalid');
                 }
-                
+
                 const salaryInput = $('#salary');
                 const salary = parseInt(salaryInput.val().trim());
                 if (!salary || salary <= 0) {
                     showError(salaryInput, 'Salary must be a positive integer');
                     isValid = false;
                 }
+                else {
+                    salaryInput.removeClass('is-invalid');
+                }
 
                 if (!isValid) {
                     event.preventDefault();
                 }
             });
-    
+
             function showError(input, message) {
                 const formControl = input.parent();
                 const errorDiv = $('<div class="invalid-feedback"></div>').text(message);
                 formControl.append(errorDiv);
                 input.addClass('is-invalid');
             }
-    
+
             function isValidEmail(email) {
                 const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                 return re.test(email);
             }
         });
-    </script>        
+    </script>
 @endsection

@@ -59,7 +59,6 @@
                         <div class="mb-3">
                             <label for="name" class="form-label">{{ __('Name') }}</label>
                             <input id="name" class="form-control" type="text" name="name" required>
-                            <div id="name_error" class="text-danger"></div>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -70,21 +69,34 @@
         </div>
     </div>
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            var addForm = document.getElementById('add-method');
-            addForm.addEventListener('submit', function(event) {
-                var category_name = addForm.querySelector('#name').value;
-                var existingProductCategories = {!! json_encode($productCategories->pluck('name')->toArray()) !!};
-                if (existingProductCategories.includes(category_name)) {
-                    event.preventDefault();
-                    name_error.innerText = 'Category name must be unique.';
-                    name_error.style.display = 'block';
+        $(document).ready(function () {
+            $('#add-method').submit(function (event) {
+                let isValid = true;
+
+                $('.invalid-feedback').remove();
+                $('.has-error').removeClass('has-error');
+
+                const nameInput = $('#name');
+                const existingNames = {!! json_encode($productCategories->pluck('name')->toArray()) !!};
+                console.log(existingNames);
+                if (existingNames.includes(nameInput.val())) {
+                    showError(nameInput, 'Product Categories already exists');
+                    isValid = false;
                 }
                 else {
-                    name_error.innerText = '';
-                    name_error.style.display = 'none';
+                    nameInput.removeClass('is-invalid');
+                }
+                if (!isValid) {
+                    event.preventDefault();
                 }
             });
+
+            function showError(input, message) {
+                const formControl = input.parent();
+                const errorDiv = $('<div class="invalid-feedback"></div>').text(message);
+                formControl.append(errorDiv);
+                input.addClass('is-invalid');
+            }
         });
     </script>
 @endsection
