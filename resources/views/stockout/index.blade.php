@@ -17,7 +17,8 @@
                     <thead>
                         <tr>
                             <th class="col-md-1 text-center">ID</th>
-                            <th class="col-md-9 text-center">Description</th>
+                            <th class="col-md-8 text-center">Product Name</th>
+                            <th class="col-md-8 text-center">Description</th>
                             <th class="col-md-2 text-center">Quantity</th>
                             <th class="col-md-1 text-center">Action</th>
                         </tr>
@@ -27,6 +28,7 @@
                         @foreach ($stockouts as $stockout)
                             <tr>
                                 <td class="align-middle text-center fw-bold">{{ $stockout->id }}</td>
+                                <td class="align-middle text-center">{{ $stockout->product->name }}</td>
                                 <td class="align-middle text-center">{{ $stockout->description }}</td>
                                 <td class="align-middle text-center">{{ $stockout->quantity }}</td>
                                 <td class="align-middle text-center">

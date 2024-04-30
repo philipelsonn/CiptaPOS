@@ -16,10 +16,10 @@
                     <thead>
                         <tr class="">
                             <th class="col-md-1 align-middle">ID</th>
-                            <th class="col-md-9 align-middle">Product</th>
-                            <th class="col-md-9 align-middle">Supplier</th>
-                            <th class="col-md-9 align-middle">Price</th>
-                            <th class="col-md-2 align-middle">Action</th>
+                            <th class="col-md-4 align-middle">Product</th>
+                            <th class="col-md-4 align-middle">Supplier</th>
+                            <th class="col-md-2 align-middle">Price</th>
+                            <th class="col-md-1 align-middle">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -29,7 +29,7 @@
                                 <td class="align-middle fw-bold">{{ $supplierPricing->id }}</td>
                                 <td class="align-middle">{{ $supplierPricing->product->name }}</td>
                                 <td class="align-middle">{{ $supplierPricing->supplier->company_name }}</td>
-                                <td class="align-middle">{{ $supplierPricing->price }}</td>
+                                <td class="align-middle">Rp {{ number_format($supplierPricing->price, 0, ',', '.') }}</td>
                                 <td class="align-middle">
                                     <div class="d-flex">
                                         <a class="btn btn-sm btn-warning me-2" data-bs-toggle="modal" data-bs-target="#update{{$supplierPricing->id}}">
@@ -69,7 +69,7 @@
                                 <select id="product_id" name="product_id" class="form-select">
                                     <option value="Select" selected disabled>Select Product</option>
                                     @foreach ($products as $product)
-                                        <option value={{$product->id}} 
+                                        <option value={{$product->id}}
                                             @if ($supplierPricing->product_id == $product->id) selected @endif>
                                             {{ $product->name }}
                                         </option>
@@ -81,7 +81,7 @@
                                 <select id="supplier_id" name="supplier_id" class="form-select">
                                     <option value="Select" selected disabled>Select Supplier</option>
                                     @foreach ($suppliers as $supplier)
-                                        <option value={{$supplier->id}} 
+                                        <option value={{$supplier->id}}
                                             @if ($supplierPricing->supplier_id == $supplier->id) selected @endif>
                                             {{ $supplier->company_name }}
                                         </option>
@@ -91,7 +91,7 @@
                             <div class="mb-3">
                                 <label for="price" class="form-label">{{ __('Price') }}</label>
                                 <input id="price" class="form-control" type="number" name="price" value="{{ $supplierPricing->price }}" required min="1">
-                            </div>  
+                            </div>
                         </div>
                         <div class="modal-footer">
                             @method('PUT')
@@ -110,7 +110,7 @@
                     <h5 class="modal-title" id="exampleModalLabel">Add Supplier Pricing</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form action="{{route('supplier-pricings.store')}}" method="POST" enctype="multipart/form-data">
+                <form action="{{route('supplier-pricings.store')}}" id = "addSupplierForm"method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="modal-body">
                         <div class="mb-3">
@@ -118,7 +118,7 @@
                             <select id="product_id" name="product_id" class="form-select">
                                 <option value="Select" selected disabled>Select Product</option>
                                 @foreach ($products as $product)
-                                    <option value={{$product->id}} 
+                                    <option value={{$product->id}}
                                         @if (old('product_id') == $product->id) selected @endif>
                                         {{ $product->name }}
                                     </option>
@@ -130,7 +130,7 @@
                             <select id="supplier_id" name="supplier_id" class="form-select">
                                 <option value="Select" selected disabled>Select Supplier</option>
                                 @foreach ($suppliers as $supplier)
-                                    <option value={{$supplier->id}} 
+                                    <option value={{$supplier->id}}
                                         @if (old('supplier_id') == $supplier->id) selected @endif>
                                         {{ $supplier->company_name }}
                                     </option>
@@ -139,8 +139,8 @@
                         </div>
                         <div class="mb-3">
                             <label for="price" class="form-label">{{ __('Price') }}</label>
-                            <input id="price" class="form-control" type="number" name="price" value="{{ old('price') }}" required min="0">
-                        </div>  
+                            <input id="price" class="form-control" type="number" name="price" value="{{ old('price') }}" required min="1">
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-primary">{{ __('Submit') }}</button>
@@ -149,4 +149,32 @@
             </div>
         </div>
     </div>
+    <script>
+        $(document).ready(function () {
+            $('#addSupplierForm').submit(function (event) {
+                let isValid = true;
+
+                $('.invalid-feedback').remove();
+                var supplierPricings = {!! json_encode($supplierPricings) !!};
+                const supplierInput = $('#supplier_id');
+                const productInput = $('#product_id');
+                const priceInput = $('#price');
+                const isDuplicate = supplierPricings.some(pricing => pricing.product_id == productInput.val() && pricing.supplier_id == supplierInput.val());
+                if (isDuplicate) {
+                    Toastify({
+                    text: 'Supplier pricing with this product and supplier already exists.',
+                    backgroundColor: 'linear-gradient(to right, #ff416c, #ff4b2b)',
+                    className: 'info',
+                    duration: 2000, // Durasi dalam milidetik
+                    position: 'left', // Posisi bottom left
+                    gravity: 'bottom',
+                }).showToast();
+                isValid = false;
+                }
+                if (!isValid) {
+                    event.preventDefault();
+                }
+            });
+        });
+    </script>
 @endsection

@@ -16,12 +16,12 @@
                     <thead>
                         <tr class="">
                             <th class="col-md-1 align-middle">ID</th>
-                            <th class="col-md-9 align-middle">Name</th>
-                            <th class="col-md-9 align-middle">Email</th>
-                            <th class="col-md-9 align-middle">Phone</th>
-                            <th class="col-md-9 align-middle">Type</th>
-                            <th class="col-md-9 align-middle">Salary</th>
-                            <th class="col-md-2 align-middle">Action</th>
+                            <th class="col-md-3 align-middle">Name</th>
+                            <th class="col-md-3 align-middle">Email</th>
+                            <th class="col-md-1 align-middle">Phone</th>
+                            <th class="col-md-1 align-middle">Type</th>
+                            <th class="col-md-2 align-middle">Salary</th>
+                            <th class="col-md-1 align-middle">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -33,7 +33,7 @@
                                 <td class="align-middle">{{ $employee->email }}</td>
                                 <td class="align-middle">{{ $employee->phone_number }}</td>
                                 <td class="align-middle">{{ $employee->type }}</td>
-                                <td class="align-middle">{{ $employee->salary }}</td>
+                                <td class="align-middle">Rp {{ number_format($employee->salary, 0, ',', '.') }}</td>
                                 <td class="align-middle">
                                     <div class="d-flex">
                                         <form action="{{ route('employees.destroy', $employee->id) }}" method="POST">

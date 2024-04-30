@@ -16,12 +16,12 @@
                     <thead>
                         <tr class="">
                             <th class="col-md-1 align-middle">ID</th>
-                            <th class="col-md-9 align-middle">Product</th>
-                            <th class="col-md-9 align-middle">Supplier</th>
-                            <th class="col-md-9 align-middle">Quantity</th>
-                            <th class="col-md-9 align-middle">Price</th>
-                            <th class="col-md-9 align-middle">Total Price</th>
-                            <th class="col-md-9 align-middle">Transaction Date</th>
+                            <th class="col-md-3 align-middle">Product</th>
+                            <th class="col-md-2 align-middle">Supplier</th>
+                            <th class="col-md-1 align-middle">Quantity</th>
+                            <th class="col-md-1 align-middle">Price</th>
+                            <th class="col-md-2 align-middle">Total Price</th>
+                            <th class="col-md-2 align-middle">Transaction Date</th>
                             <th class="col-md-2 align-middle">Action</th>
                         </tr>
                     </thead>
@@ -33,8 +33,8 @@
                                 <td class="align-middle">{{ $supplierTransaction->supplierPricing->product->name }}</td>
                                 <td class="align-middle">{{ $supplierTransaction->supplierPricing->supplier->company_name }}</td>
                                 <td class="align-middle">{{ $supplierTransaction->quantity }}</td>
-                                <td class="align-middle">{{ $supplierTransaction->price }}</td>
-                                <td class="align-middle">{{ $supplierTransaction->price * $supplierTransaction->quantity }}</td>
+                                <td class="align-middle">Rp {{ number_format($supplierTransaction->price, 0, ',', '.') }}</td>
+                                <td class="align-middle">Rp {{ number_format($supplierTransaction->price * $supplierTransaction->quantity, 0, ',', '.') }}</td>
                                 <td class="align-middle">{{ $supplierTransaction->transaction_date }}</td>
                                 <td class="align-middle">
                                     <div class="d-flex">
@@ -102,4 +102,22 @@
             </div>
         </div>
     </div>
+    <script>
+    $('#product_id').on('change', function() {
+        var supplierPricings = @json($supplierPricings);
+        var product_id = $(this).val();
+        var productSuppliers = supplierPricings.filter(function(pricing) {
+            return pricing.product_id == product_id;
+        }).map(function(pricing) {
+                return {
+                id: pricing.supplier_id,
+                company_name: pricing.supplier.company_name
+            };
+        });
+        $('#supplier_id').empty();
+        $.each(productSuppliers, function(index, supplier) {
+            $('#supplier_id').append('<option value="' + supplier.id + '">' + supplier.company_name + '</option>');
+        });
+    });
+    </script>
 @endsection
