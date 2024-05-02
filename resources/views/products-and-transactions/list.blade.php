@@ -289,7 +289,16 @@
                     stopOnFocus: true, // Menghentikan countdown saat toast message dihover
                 }).showToast();
                 return; // Menghentikan eksekusi lebih lanjut jika kondisi tidak terpenuhi
-            }
+            } else if (paymentMethodId !== '2' && cardNumber) {
+                Toastify({
+                    text: 'Card number field must be empty for transactions without card.',
+                    duration: 3000, // Durasi toast message (ms)
+                    gravity: 'bottom', // Letak toast message (top, bottom, center)
+                    backgroundColor: '#ff6347', // Warna background toast message
+                    stopOnFocus: true, // Menghentikan countdown saat toast message dihover
+                }).showToast();
+                return; // Menghentikan eksekusi lebih lanjut jika kondisi tidak terpenuhi
+}
             // Send shopping cart data and payment method ID to route /transaction
             $.post('{{ route("transactions.store") }}', {
                 cart: cart,

@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Storage;
 use App\Models\User;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
@@ -20,19 +21,26 @@ class ProfileController extends Controller
      */
     public function index()
     {
-        return view('employees.index',[
-            'employees' => User::all()
-        ]);
+        $employees = User::all();
+
+        foreach ($employees as $employee) {
+            $employee->phone_number = Crypt::decryptString($employee->phone_number);
+            $employee->salary = Crypt::decryptString($employee->salary);
+        }
+
+        return view('employees.index', ['employees' => $employees]);
     }
+
 
     /**
      * Display the user's profile form.
      */
     public function edit(Request $request): View
     {
-        return view('profile.edit', [
-            'user' => $request->user(),
-        ]);
+        $user = $request->user();
+        $user->phone_number = Crypt::decryptString($user->phone_number);
+
+        return view('profile.edit', ['user' => $user]);
     }
 
     /**
@@ -80,7 +88,7 @@ class ProfileController extends Controller
         // Perbarui informasi profil
         $user->name = $validatedData['name'];
         $user->email = $validatedData['email'];
-        $user->phone_number = $validatedData['phone_number'];
+        $user->phone_number = Crypt::encryptString($validatedData['phone_number']);
 
         // Simpan perubahan
         $user->save();
@@ -96,7 +104,7 @@ class ProfileController extends Controller
     {
         $user = User::findOrFail($id);
         $user->delete();
-    
+
         return redirect()->route("employees.index");
     }
 }

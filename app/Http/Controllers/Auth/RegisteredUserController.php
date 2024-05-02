@@ -9,6 +9,7 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\View\View;
 
@@ -41,8 +42,8 @@ class RegisteredUserController extends Controller
             'email' => $request->email,
             'password' => Hash::make('Testing12345'),
             'avatar' => 'image/Gender-neutral-profile.png',
-            'phone_number' => $request->phone_number,
-            'salary' => $request->salary,
+            'phone_number' => Crypt::encryptString($request->phone_number),
+            'salary' => Crypt::encryptString($request->salary),
             'type'=> $request->type,
             'email_verified_at'=> now()
         ];

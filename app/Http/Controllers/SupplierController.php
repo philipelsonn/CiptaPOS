@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Supplier;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
 
 class SupplierController extends Controller
 {
@@ -12,9 +13,16 @@ class SupplierController extends Controller
      */
     public function index()
     {
-        return view('suppliers.index',[
-            'suppliers' => Supplier::all()
-        ]);
+        $suppliers = Supplier::all();
+
+        foreach ($suppliers as $supplier) {
+            $supplier->company_address = Crypt::decryptString($supplier->company_address);
+            $supplier->pic_name = Crypt::decryptString($supplier->pic_name);
+            $supplier->pic_phone = Crypt::decryptString($supplier->pic_phone);
+            $supplier->pic_email = Crypt::decryptString($supplier->pic_email);
+        }
+
+        return view('suppliers.index', ['suppliers' => $suppliers]);
     }
 
     /**
@@ -32,10 +40,10 @@ class SupplierController extends Controller
 
         Supplier::create([
             'company_name' => $request->company_name,
-            'company_address' => $request->company_address,
-            'pic_name' => $request->pic_name,
-            'pic_phone' => $request->pic_phone,
-            'pic_email' => $request->pic_email,
+            'company_address' => Crypt::encryptString($request->company_address),
+            'pic_name' => Crypt::encryptString($request->pic_name),
+            'pic_phone' => Crypt::encryptString($request->pic_phone),
+            'pic_email' => Crypt::encryptString($request->pic_email),
         ]);
 
         return redirect()->route("suppliers.index");
@@ -56,10 +64,10 @@ class SupplierController extends Controller
 
         $supplier->update([
             'company_name' => $request->company_name,
-            'company_address' => $request->company_address,
-            'pic_name' => $request->pic_name,
-            'pic_phone' => $request->pic_phone,
-            'pic_email' => $request->pic_email,
+            'company_address' => Crypt::encryptString($request->company_address),
+            'pic_name' => Crypt::encryptString($request->pic_name),
+            'pic_phone' => Crypt::encryptString($request->pic_phone),
+            'pic_email' => Crypt::encryptString($request->pic_email),
         ]);
 
         return redirect()->route("suppliers.index");
