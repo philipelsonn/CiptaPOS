@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
@@ -21,10 +22,10 @@ class UsersTableSeeder extends Seeder
             'name' => 'John Doe',
             'email' => 'john@example.com',
             'email_verified_at' => now(),
-            'phone_number' => '123456789',
+            'phone_number' => Crypt::encryptString('123456789'),
             'type' => 'employee',
             'avatar' => 'image/default-male.png',
-            'salary' => 500000,
+            'salary' => Crypt::encryptString('500000'),
             'password' => Hash::make('Testing12345'),
             'remember_token' => Str::random(10),
             'created_at' => now(),
@@ -35,10 +36,10 @@ class UsersTableSeeder extends Seeder
             'name' => 'Administration',
             'email' => 'john12345@example.com',
             'email_verified_at' => now(),
-            'phone_number' => '123456789',
+            'phone_number' => Crypt::encryptString('123456789'),
             'type' => 'admin',
             'avatar' => 'image/default-male.png',
-            'salary' => 5000000,
+            'salary' => Crypt::encryptString('5000000'),
             'password' => Hash::make('Password12345'),
             'remember_token' => Str::random(10),
             'created_at' => now(),
