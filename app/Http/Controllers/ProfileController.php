@@ -88,7 +88,7 @@ class ProfileController extends Controller
         // Perbarui informasi profil
         $user->name = $validatedData['name'];
         $user->email = $validatedData['email'];
-        $user->phone_number = Crypt::decryptString($validatedData['phone_number']);
+        $user->phone_number = Crypt::encryptString($validatedData['phone_number']);
 
         // Simpan perubahan
         $user->save();
