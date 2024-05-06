@@ -18,6 +18,7 @@ return new class extends Migration
             $table->unsignedBigInteger('cashier_id');
             $table->foreign('cashier_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
             $table->longText('card_number')->nullable();
+            $table->longText('iv')->nullable();
             $table->timestamp('transaction_date')->nullable();
             $table->timestamps();
         });

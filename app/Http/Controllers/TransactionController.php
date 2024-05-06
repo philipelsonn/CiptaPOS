@@ -29,6 +29,19 @@ class TransactionController extends Controller
     {
         $transactionHeaders = TransactionHeader::with('transactionDetails')->get();
         $transactionDetails = TransactionDetail::all();
+
+        foreach ($transactionHeaders as $transactionHeader) {
+            // AES 
+            // $transactionHeader->card_number = Crypt::decrypt($transactionHeader->card_number);
+
+            // Triple DES 
+            $transactionHeader->card_number = $this->threeDESDecryption($transactionHeader->card_number, env('APP_KEY'), $transactionHeader->iv);
+            
+            // RC4
+            // $transactionHeader->card_number = $this->rc4_decode($transactionHeader->card_number, env('APP_KEY'));
+        }
+
+
         $supplierTransactions = SupplierTransaction::all();
         $totalRevenue = $transactionDetails->sum(function ($transactionDetail) {
             return $transactionDetail->price * $transactionDetail->quantity;
@@ -37,6 +50,7 @@ class TransactionController extends Controller
         $totalOutcome = $supplierTransactions->sum(function ($supplierTransaction) {
             return $supplierTransaction->price * $supplierTransaction->quantity;
         });
+
         $mostSoldProducts = TransactionDetail::select('product_id', DB::raw('SUM(quantity) as total_quantity'))
         ->whereHas('transactionHeader', function ($query) {
             $query->where('transaction_date', '>=', now()->subMonth()->startOfMonth())
@@ -68,10 +82,24 @@ class TransactionController extends Controller
         $transactionHeader->cashier_id = auth()->id();
         $transactionHeader->payment_method_id = $request->payment_method_id;
         $transactionHeader->transaction_date = now();
-        $transactionHeader->card_number = $request->card_number ? Crypt::encrypt($request->card_number) : null; // Enkripsi hanya jika tidak null
+        $iv = $this->generateRandomIV();
+        $transactionHeader->iv = $iv;
+
+        if ($request->card_number) {
+            //AES
+            // $transactionHeader->card_number = Crypt::encrypt($request->card_number); 
+    
+            //Triple DES
+            $transactionHeader->card_number = $this->threeDESEncryption($request->card_number, env('APP_KEY'), $iv);
+    
+            //RC4
+            // $$transactionHeader->card_number = $this->rc4_encode($request->card_number, env('APP_KEY'));
+        } else {
+            $transactionHeader->card_number = null;
+        }
+        
         $transactionHeader->save();
-
-
+        
         // Refresh transactionHeader to get the latest data, including the ID
         $transactionHeader->refresh();
 
@@ -109,5 +137,84 @@ class TransactionController extends Controller
     {
         $transactionDetail->delete();
         return redirect()->route("transactions/history");
+    }
+
+    function generateRandomIV() {
+        $randomBytes = random_bytes(4);
+        $iv = bin2hex($randomBytes);
+        
+        return $iv;
+    }
+
+    function threeDESEncryption($data, $secret, $iv)
+    {
+        $key = $secret;
+        $data2 = $data;
+        $key .= substr($key, 0, 8);
+        $encData = openssl_encrypt($data2, 'des-ede3-cbc', $key, OPENSSL_RAW_DATA, $iv);
+
+        return urlencode(base64_encode($encData));
+    }
+
+    function threeDESDecryption($data, $secret, $iv)
+    {
+        $data2 = urldecode($data);
+        $key = $secret;
+        $key .= substr($key, 0, 8);
+        $data3 = base64_decode($data2);
+    
+        return openssl_decrypt($data3, 'des-ede3-cbc', $key, OPENSSL_RAW_DATA, $iv);
+    }
+
+    private function rc4_encode(string $string, string $key): string
+    {
+        $res = $this->rc4($string, $key);
+        return bin2hex($res);
+    }
+
+    private function rc4_decode(string $string, string $key): string
+    {
+        // Check if the input string is a valid hex string
+        if (!ctype_xdigit($string)) {
+            return '';
+        }
+
+        // Convert hex to binary
+        $binaryData = hex2bin($string);
+        return $this->rc4($binaryData, $key);
+    }
+
+    private function rc4(string $str, string $key): string
+    {
+        // Initialize the state array
+        $s = range(0, 255);
+        $j = 0;
+
+        // Key scheduling algorithm (KSA)
+        $keyLength = strlen($key);
+        for ($i = 0; $i < 256; $i++) {
+            $j = ($j + $s[$i] + ord($key[$i % $keyLength])) % 256;
+            // Swap s[$i] and s[$j]
+            [$s[$i], $s[$j]] = [$s[$j], $s[$i]];
+        }
+
+        // Pseudo-random generation algorithm (PRGA)
+        $i = 0;
+        $j = 0;
+        $output = '';
+
+        for ($y = 0; $y < strlen($str); $y++) {
+            $i = ($i + 1) % 256;
+            $j = ($j + $s[$i]) % 256;
+
+            // Swap s[$i] and s[$j]
+            [$s[$i], $s[$j]] = [$s[$j], $s[$i]];
+
+            // Calculate the key stream and XOR with the input string
+            $keyStream = chr($s[($s[$i] + $s[$j]) % 256]);
+            $output .= $str[$y] ^ $keyStream;
+        }
+
+        return $output;
     }
 }
