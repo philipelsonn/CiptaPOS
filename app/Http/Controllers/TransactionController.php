@@ -31,14 +31,20 @@ class TransactionController extends Controller
         $transactionDetails = TransactionDetail::all();
 
         foreach ($transactionHeaders as $transactionHeader) {
-            // AES 
+            $startTime = microtime(true);
+
+            // AES
             // $transactionHeader->card_number = Crypt::decrypt($transactionHeader->card_number);
 
-            // Triple DES 
-            $transactionHeader->card_number = $this->threeDESDecryption($transactionHeader->card_number, env('APP_KEY'), $transactionHeader->iv);
-            
+            // Triple DES
+            // $transactionHeader->card_number = $this->threeDESDecryption($transactionHeader->card_number, env('APP_KEY'), $transactionHeader->iv);
+
             // RC4
-            // $transactionHeader->card_number = $this->rc4_decode($transactionHeader->card_number, env('APP_KEY'));
+            $transactionHeader->card_number = $this->rc4_decode($transactionHeader->card_number, env('APP_KEY'));
+            $endTime = microtime(true);
+            $executionTime = ($endTime - $startTime) * 1000; // Konversi ke milidetik
+            Log::info("Decryption time for TransactionHeader ID {$transactionHeader->id}: " . $executionTime . " milliseconds");
+
         }
 
 
@@ -86,20 +92,26 @@ class TransactionController extends Controller
         $transactionHeader->iv = $iv;
 
         if ($request->card_number) {
+            $startTime = microtime(true);
+
             //AES
-            // $transactionHeader->card_number = Crypt::encrypt($request->card_number); 
-    
+            // $transactionHeader->card_number = Crypt::encrypt($request->card_number);
+
             //Triple DES
             $transactionHeader->card_number = $this->threeDESEncryption($request->card_number, env('APP_KEY'), $iv);
-    
-            //RC4
-            // $$transactionHeader->card_number = $this->rc4_encode($request->card_number, env('APP_KEY'));
+
+            // RC4
+            // $transactionHeader->card_number = $this->rc4_encode($request->card_number, env('APP_KEY'));
+            $endTime = microtime(true);
+            $executionTime = ($endTime - $startTime) * 1000; // Konversi ke milidetik
+            Log::info("Encryption time for TransactionHeader ID {$transactionHeader->id}: " . $executionTime . " milliseconds");
+
         } else {
             $transactionHeader->card_number = null;
         }
-        
+
         $transactionHeader->save();
-        
+
         // Refresh transactionHeader to get the latest data, including the ID
         $transactionHeader->refresh();
 
@@ -142,7 +154,7 @@ class TransactionController extends Controller
     function generateRandomIV() {
         $randomBytes = random_bytes(4);
         $iv = bin2hex($randomBytes);
-        
+
         return $iv;
     }
 
@@ -162,7 +174,7 @@ class TransactionController extends Controller
         $key = $secret;
         $key .= substr($key, 0, 8);
         $data3 = base64_decode($data2);
-    
+
         return openssl_decrypt($data3, 'des-ede3-cbc', $key, OPENSSL_RAW_DATA, $iv);
     }
 

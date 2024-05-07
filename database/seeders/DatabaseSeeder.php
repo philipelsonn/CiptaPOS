@@ -18,9 +18,9 @@ class DatabaseSeeder extends Seeder
         $this->call(SupplierSeeders::class);
         $this->call(ProductSeeders::class);
         $this->call(SupplierPricingSeeders::class);
-        $this->call([
-            TransactionHeadersSeeder::class,
-            TransactionDetailsSeeder::class,
-        ]);
+        // $this->call([
+        //     TransactionHeadersSeeder::class,
+        //     TransactionDetailsSeeder::class,
+        // ]);
     }
 }

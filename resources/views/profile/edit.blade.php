@@ -10,7 +10,12 @@
     <div style="max-width: 1000px; margin: 0 auto;">
         <div style="background-color: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
             <div style="display: flex;">
-                <div style="flex: 45;">
+                <div style ="flex: 5">
+                    <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                        <a href="{{ route('transactions.dashboard') }}" style="margin-left: 10px; padding: 25px;"><i class="fas fa-arrow-left"></i></a>
+                    </div>
+                </div>
+                <div style="flex: 40;">
                     <h2 style="padding-left: 30px; margin-bottom:24px; margin-top:24px;font-size: 1.5rem; font-weight: 600; color: #333;">{{ __('Profile') }}</h2>
                     <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
                         <div style="margin-bottom: 12px;">
