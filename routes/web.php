@@ -40,8 +40,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/transactions', [TransactionController::class, 'store'])->name('transactions.store');
     Route::get('/transactions', [TransactionController::class, 'index'])->name("transactions.dashboard");
     Route::get('/product-transactions/receipt/{id}', [TransactionController::class, 'showReceipt'])->name('product.transactions.receipt');
-    Route::get('transactions/history', [TransactionController::class, 'showHistory'])->name('transactions.history');
-    Route::delete('transactions/history', [TransactionController::class, 'destroy']);
+
 
     //Product
     Route::get('/product/search', [ProductController::class, 'search'])->name('product/search');
@@ -57,6 +56,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('/employees/{employee}', [ProfileController::class, 'destroy'])->name('employees.destroy');
         Route::post('register', [RegisteredUserController::class, 'store'])->name('employees.add');
         Route::get('/employees', [ProfileController::class, 'index'])->name('employees.index');
+        Route::get('transactions/history', [TransactionController::class, 'showHistory'])->name('transactions.history');
+        Route::delete('transactions/history', [TransactionController::class, 'destroy']);
 
         Route::resource('products', ProductController::class)->except(['create', 'edit', 'show']);
         Route::resource('suppliers', SupplierController::class)->except(['create', 'edit', 'show']);
@@ -66,5 +67,5 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::resource('payment-methods', PaymentMethodController::class)->except(['create', 'edit', 'show']);
         Route::resource('product-categories', ProductCategoryController::class)->except(['create', 'edit', 'show']);
     });
-    
+
 });
