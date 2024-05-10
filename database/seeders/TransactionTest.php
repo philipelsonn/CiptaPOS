@@ -24,6 +24,7 @@ class TransactionTest extends Seeder
         }
 
         $average = $this->totalTime / $simulate;
+        Log::info('Total time: ' . $this->totalTime * 1000); // in milliseconds
         Log::info('Average encryption time: ' . $average * 1000); // in milliseconds
     }
 
