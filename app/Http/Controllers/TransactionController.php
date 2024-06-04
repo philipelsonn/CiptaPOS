@@ -9,6 +9,7 @@ use App\Models\Product;
 use App\Models\PaymentMethod;
 use App\Models\ProductCategory;
 use App\Models\SupplierTransaction;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -36,22 +37,20 @@ class TransactionController extends Controller
             $startTime = microtime(true);
 
             // AES
-            // $transactionHeader->card_number = Crypt::decrypt($transactionHeader->card_number);
+            $transactionHeader->card_number = Crypt::decrypt($transactionHeader->card_number);
 
             // Triple DES
             // $transactionHeader->card_number = $this->threeDESDecryption($transactionHeader->card_number, env('APP_KEY'), $transactionHeader->iv);
 
             // RC4
-            $transactionHeader->card_number = $this->rc4_decode($transactionHeader->card_number, env('APP_KEY'));
+            // $transactionHeader->card_number = $this->rc4_decode($transactionHeader->card_number, env('APP_KEY'));
             $endTime = microtime(true);
             $executionTime = ($endTime - $startTime) * 1000; // Konversi ke milidetik
             $totalExecution += $executionTime;
             $count += 1;
             Log::info("Decryption time for TransactionHeader ID {$transactionHeader->id}: " . $executionTime . " milliseconds");
         }
-        Log::info("Total time for decryption: ". $totalExecution);
-        $averageExecutionTime = $totalExecution / $count;
-        Log::info("Average time for decryption: ". $averageExecutionTime);
+        Log::info("Total time for decryption: " . $totalExecution . " milliseconds");
 
 
 
@@ -98,10 +97,12 @@ class TransactionController extends Controller
         $transactionHeader->transaction_date = now();
         $iv = $this->generateRandomIV();
         $transactionHeader->iv = $iv;
+        $key = env('APP_KEY');
+        Log::info('APP_KEY value: ' . $key);
 
         if ($request->card_number) {
 
-            //AES
+            // AES
             $transactionHeader->card_number = Crypt::encrypt($request->card_number);
 
             //Triple DES
@@ -109,6 +110,7 @@ class TransactionController extends Controller
 
             // RC4
             // $transactionHeader->card_number = $this->rc4_encode($request->card_number, env('APP_KEY'));
+            $transactionHeader->card_number = $request->card_number;
 
         } else {
             $transactionHeader->card_number = null;
@@ -137,7 +139,8 @@ class TransactionController extends Controller
         $request->session()->forget('cart');
         $endTime = microtime(true);
         $executionTime = ($endTime - $startTime) * 1000; // Konversi ke milidetik
-        Log::info("Encryption time for TransactionHeader ID {$transactionHeader->id}: " . $executionTime . " milliseconds");
+        $user = Auth::user();
+        Log::info("Encryption time for TransactionHeader ID {$transactionHeader->id} by user ID {$user->id}: " . $executionTime . " milliseconds");
 
         return response()->json([
             'message' => 'Transaction created successfully',
