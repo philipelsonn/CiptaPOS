@@ -58,6 +58,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/employees', [ProfileController::class, 'index'])->name('employees.index');
         Route::get('transactions/history', [TransactionController::class, 'showHistory'])->name('transactions.history');
         Route::delete('transactions/history', [TransactionController::class, 'destroy']);
+        Route::post('/export-transaction', [TransactionController::class, 'exportTransaction'])->name('transactions.export');
 
         Route::resource('products', ProductController::class)->except(['create', 'edit', 'show']);
         Route::resource('suppliers', SupplierController::class)->except(['create', 'edit', 'show']);
