@@ -45,5 +45,18 @@ class UsersTableSeeder extends Seeder
             'created_at' => now(),
             'updated_at' => now(),
         ]);
+        DB::table('users')->insert([
+            'name' => 'John Doe 1',
+            'email' => 'john1@example.com',
+            'email_verified_at' => now(),
+            'phone_number' => Crypt::encryptString('123456789'),
+            'type' => 'employee',
+            'avatar' => 'image/default-male.png',
+            'salary' => Crypt::encryptString('500000'),
+            'password' => Hash::make('Testing12345'),
+            'remember_token' => Str::random(10),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
     }
 }
