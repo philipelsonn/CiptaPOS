@@ -83,7 +83,7 @@
                                 <input id="description" class="form-control" type="text" name="description" value="{{ $product->description }}">
                             </div>
                             <div class="mb-3">
-                                <label for="image" class="col-md-3 col-form-label text-sm-left fw-bold">{{_('Image')}}</label>
+                                <label for="image" class="col-md-3 col-form-label text-sm-left fw-bold">{{__('Image')}}</label>
                                 <input type="file" id="image_new" name="image_new" class="form-control">
                                 <input class="form-control rounded-pill" type="text" id="image_old"
                                     name="image_old" value="{{ $product->image }}" hidden>

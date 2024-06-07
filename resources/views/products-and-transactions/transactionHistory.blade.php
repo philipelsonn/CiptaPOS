@@ -10,6 +10,10 @@
     <div class="card p-4 bg-light mt-3 mb-3">
         <div class="d-flex justify-content-between mt-2 mb-4">
             <h2 class="fw-bold">Transaction History</h2>
+            <form action="{{ route('transactions.export') }}" method="POST" onsubmit="return confirm('Are you sure you want to export?')">
+                @csrf
+                <button type="submit" class="btn btn-lg btn-success text-white fw-bold">Export</button>
+            </form>
         </div>
         <div class="table-responsive">
             <table id="transactionTable" class="table table-striped bg-light">

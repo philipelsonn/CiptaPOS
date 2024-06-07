@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\TransactionHeader;
 use App\Models\TransactionDetail;
+use App\Models\TransactionHeaderBatch;
+use App\Models\TransactionDetailBatch;
 use App\Models\Product;
 use App\Models\PaymentMethod;
 use App\Models\ProductCategory;
@@ -33,26 +35,22 @@ class TransactionController extends Controller
         $totalExecution = 0;
         $count = 0;
 
-        foreach ($transactionHeaders as $transactionHeader) {
-            $startTime = microtime(true);
+        // foreach ($transactionHeaders as $transactionHeader) {
+        //     $startTime = microtime(true);
 
-            // AES
-            $transactionHeader->card_number = Crypt::decrypt($transactionHeader->card_number);
+        //     // AES
+        //     // $transactionHeader->card_number = Crypt::decrypt($transactionHeader->card_number);
 
-            // Triple DES
-            // $transactionHeader->card_number = $this->threeDESDecryption($transactionHeader->card_number, env('APP_KEY'), $transactionHeader->iv);
+        //     // Triple DES
+        //     // $transactionHeader->card_number = $this->threeDESDecryption($transactionHeader->card_number, env('APP_KEY'), $transactionHeader->iv);
 
-            // RC4
-            // $transactionHeader->card_number = $this->rc4_decode($transactionHeader->card_number, env('APP_KEY'));
-            $endTime = microtime(true);
-            $executionTime = ($endTime - $startTime) * 1000; // Konversi ke milidetik
-            $totalExecution += $executionTime;
-            $count += 1;
-            Log::info("Decryption time for TransactionHeader ID {$transactionHeader->id}: " . $executionTime . " milliseconds");
-        }
-        Log::info("Total time for decryption: " . $totalExecution . " milliseconds");
+        //     // RC4
+        //     $transactionHeader->card_number = $this->rc4_decode($transactionHeader->card_number, env('APP_KEY'));
+        //     $endTime = microtime(true);
+        //     $executionTime = ($endTime - $startTime) * 1000; // Konversi ke milidetik
+        //     Log::info("Decryption time for TransactionHeader ID {$transactionHeader->id}: " . $executionTime . " milliseconds");
 
-
+        // }
 
         $supplierTransactions = SupplierTransaction::all();
         $totalRevenue = $transactionDetails->sum(function ($transactionDetail) {
@@ -101,16 +99,21 @@ class TransactionController extends Controller
         Log::info('APP_KEY value: ' . $key);
 
         if ($request->card_number) {
+            $transactionHeader->card_number = $request->card_number;
+            // $startTime = microtime(true);
 
             // AES
-            $transactionHeader->card_number = Crypt::encrypt($request->card_number);
+            // $transactionHeader->card_number = Crypt::encrypt($request->card_number);
 
             //Triple DES
+            // $transactionHeader->card_number = $this->threeDESEncryption($request->card_number, env('APP_KEY'), $iv);
             // $transactionHeader->card_number = $this->threeDESEncryption($request->card_number, env('APP_KEY'), $iv);
 
             // RC4
             // $transactionHeader->card_number = $this->rc4_encode($request->card_number, env('APP_KEY'));
-            $transactionHeader->card_number = $request->card_number;
+            // $endTime = microtime(true);
+            // $executionTime = ($endTime - $startTime) * 1000; // Konversi ke milidetik
+            // Log::info("Encryption time for TransactionHeader ID {$transactionHeader->id}: " . $executionTime . " milliseconds");
 
         } else {
             $transactionHeader->card_number = null;
@@ -158,7 +161,55 @@ class TransactionController extends Controller
     public function destroy(TransactionDetail $transactionDetail)
     {
         $transactionDetail->delete();
-        return redirect()->route("transactions/history");
+        return redirect()->route("transactions.history");
+    }
+
+    public function exportTransaction()
+    {
+        $sourceHeaders = TransactionHeader::with('transactionDetails')
+        ->where('is_exported', false)
+        ->get();
+
+        foreach ($sourceHeaders as $header) {
+            
+                //AES
+                $card = Crypt::encrypt($header->card_number);
+    
+                // Triple DES
+                // $card  = $this->threeDESEncryption($header->card_number, env('APP_KEY'), $header->iv);
+    
+                // RC4
+                // $card  = $this->rc4_encode($header->card_number, env('APP_KEY'));
+
+            $targetHeader = TransactionHeaderBatch::Create(
+                [
+                    'payment_method_id' => $header->payment_method_id,
+                    'cashier_id' => $header->cashier_id,
+                    'card_number' => $card,
+                    'iv' => $header->iv,
+                    'transaction_date' => $header->transaction_date,
+                    'created_at' => $header->created_at,
+                    'updated_at' => $header->updated_at,
+                ]
+            );
+
+            foreach ($header->transactionDetails as $detail) {
+                TransactionDetailBatch::Create(
+                    [
+                        'transaction_header_id' => $targetHeader->id,
+                        'product_id' => $detail->product_id,
+                        'quantity' => $detail->quantity,
+                        'price' => $detail->price,
+                        'created_at' => $detail->created_at,
+                        'updated_at' => $detail->updated_at,
+                    ]
+                );
+            }
+
+            $header->update(['is_exported' => true]);
+        }
+
+        return redirect()->route("transactions.history");
     }
 
     function generateRandomIV() {

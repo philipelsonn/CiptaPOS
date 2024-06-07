@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class TransactionHeader extends Model
 {
     use HasFactory;
+    protected $connection = 'mysql';
     protected $table = 'transaction_headers';
     protected $primaryKey = 'id';
     protected $timestamp = true;

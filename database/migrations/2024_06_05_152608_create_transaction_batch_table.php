@@ -11,15 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('transaction_headers', function (Blueprint $table) {
+        Schema::connection('mysql_target')->create('transaction_headers', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('payment_method_id');
-            $table->foreign('payment_method_id')->references('id')->on('payment_methods')->onUpdate('cascade')->onDelete('cascade');
-            $table->unsignedBigInteger('cashier_id');
-            $table->foreign('cashier_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
+            $table->bigInteger('payment_method_id');
+            $table->bigInteger('cashier_id');
             $table->longText('card_number')->nullable();
             $table->longText('iv')->nullable();
-            $table->boolean('is_exported')->default(false);
             $table->timestamp('transaction_date')->nullable();
             $table->timestamps();
         });
