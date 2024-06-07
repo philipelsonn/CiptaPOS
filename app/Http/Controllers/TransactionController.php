@@ -166,7 +166,9 @@ class TransactionController extends Controller
 
     public function exportTransaction()
     {
-        $sourceHeaders = TransactionHeader::with('transactionDetails')->get();
+        $sourceHeaders = TransactionHeader::with('transactionDetails')
+        ->where('is_exported', false)
+        ->get();
 
         foreach ($sourceHeaders as $header) {
             
@@ -174,7 +176,7 @@ class TransactionController extends Controller
                 $card = Crypt::encrypt($header->card_number);
     
                 // Triple DES
-                // $card  = $this->threeDESEncryption($header->card_number, env('APP_KEY'), $iv);
+                // $card  = $this->threeDESEncryption($header->card_number, env('APP_KEY'), $header->iv);
     
                 // RC4
                 // $card  = $this->rc4_encode($header->card_number, env('APP_KEY'));
