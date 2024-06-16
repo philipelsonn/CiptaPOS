@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -30,8 +31,8 @@ class Product extends Model
     {
         return $this->BelongsTo(supplierPricing::class);
     }
-    public function stockout(): HasMany
+    public function stockout(): BelongsToMany
     {
-        return $this->hasMany(Stockout::class);
+        return $this->BelongsToMany(Stockout::class);
     }
 }

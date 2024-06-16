@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class ProductCategory extends Model
 {
@@ -14,8 +14,8 @@ class ProductCategory extends Model
     protected $timestamp = true;
     protected $guarded = [];
 
-    public function product(): BelongsTo
+    public function product(): BelongsToMany
     {
-        return $this->belongsTo(Product::class, 'product_id', 'id');
+        return $this->belongsToMany(Product::class, 'product_id', 'id');
     }
 }
