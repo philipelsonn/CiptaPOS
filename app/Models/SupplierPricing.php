@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class SupplierPricing extends Model
 {
@@ -25,8 +26,8 @@ class SupplierPricing extends Model
         return $this->belongsTo(Supplier::class, 'supplier_id', 'id');
     }
 
-    public function supplierTransaction(): BelongsTo
+    public function supplierTransaction(): BelongsToMany
     {
-        return $this->belongsTo(SupplierTransaction::class);
+        return $this->belongsToMany(SupplierTransaction::class);
     }
 }
