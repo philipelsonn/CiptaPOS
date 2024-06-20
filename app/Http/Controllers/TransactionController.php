@@ -35,11 +35,11 @@ class TransactionController extends Controller
         $totalExecution = 0;
         $count = 0;
 
-        // foreach ($transactionHeaders as $transactionHeader) {
-        //     $startTime = microtime(true);
+        foreach ($transactionHeaders as $transactionHeader) {
+            // $startTime = microtime(true);
 
-        //     // AES
-        //     // $transactionHeader->card_number = Crypt::decrypt($transactionHeader->card_number);
+            // AES
+            $transactionHeader->card_number = Crypt::decrypt($transactionHeader->card_number);
 
         //     // Triple DES
         //     // $transactionHeader->card_number = $this->threeDESDecryption($transactionHeader->card_number, env('APP_KEY'), $transactionHeader->iv);
@@ -50,7 +50,7 @@ class TransactionController extends Controller
         //     $executionTime = ($endTime - $startTime) * 1000; // Konversi ke milidetik
         //     Log::info("Decryption time for TransactionHeader ID {$transactionHeader->id}: " . $executionTime . " milliseconds");
 
-        // }
+        }
 
         $supplierTransactions = SupplierTransaction::all();
         $totalRevenue = $transactionDetails->sum(function ($transactionDetail) {
@@ -99,11 +99,11 @@ class TransactionController extends Controller
         Log::info('APP_KEY value: ' . $key);
 
         if ($request->card_number) {
-            $transactionHeader->card_number = $request->card_number;
+            // $transactionHeader->card_number = $request->card_number;
             // $startTime = microtime(true);
 
             // AES
-            // $transactionHeader->card_number = Crypt::encrypt($request->card_number);
+            $transactionHeader->card_number = Crypt::encrypt($request->card_number);
 
             //Triple DES
             // $transactionHeader->card_number = $this->threeDESEncryption($request->card_number, env('APP_KEY'), $iv);
@@ -171,21 +171,11 @@ class TransactionController extends Controller
         ->get();
 
         foreach ($sourceHeaders as $header) {
-            
-                //AES
-                $card = Crypt::encrypt($header->card_number);
-    
-                // Triple DES
-                // $card  = $this->threeDESEncryption($header->card_number, env('APP_KEY'), $header->iv);
-    
-                // RC4
-                // $card  = $this->rc4_encode($header->card_number, env('APP_KEY'));
-
             $targetHeader = TransactionHeaderBatch::Create(
                 [
                     'payment_method_id' => $header->payment_method_id,
                     'cashier_id' => $header->cashier_id,
-                    'card_number' => $card,
+                    'card_number' => $header->card_number,
                     'iv' => $header->iv,
                     'transaction_date' => $header->transaction_date,
                     'created_at' => $header->created_at,
