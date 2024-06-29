@@ -39,7 +39,9 @@ class TransactionController extends Controller
             // $startTime = microtime(true);
 
             // AES
-            $transactionHeader->card_number = Crypt::decrypt($transactionHeader->card_number);
+            if($transactionHeader->card_number){
+                $transactionHeader->card_number = Crypt::decrypt($transactionHeader->card_number);
+            }
 
         //     // Triple DES
         //     // $transactionHeader->card_number = $this->threeDESDecryption($transactionHeader->card_number, env('APP_KEY'), $transactionHeader->iv);
