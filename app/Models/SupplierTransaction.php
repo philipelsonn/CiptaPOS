@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class SupplierTransaction extends Model
 {
@@ -14,8 +14,8 @@ class SupplierTransaction extends Model
     protected $timestamp = true;
     protected $guarded = [];
 
-    public function supplierPricing(): HasOne
+    public function supplierPricing(): BelongsTo
     {
-        return $this->hasOne(SupplierPricing::class, 'id', 'supplier_price_id');
+        return $this->belongsTo(SupplierPricing::class, 'supplier_price_id');
     }
 }

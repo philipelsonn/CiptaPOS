@@ -4,8 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -17,22 +15,22 @@ class Product extends Model
     protected $timestamp = true;
     protected $guarded = [];
 
-    public function productCategory(): HasOne
+    public function productCategory(): BelongsTo
     {
-        return $this->hasOne(ProductCategory::class, 'id', 'category_id');
+        return $this->belongsTo(ProductCategory::class, 'category_id');
     }
 
-    public function transactionDetail(): BelongsTo
+    public function transactionDetail(): HasMany
     {
-        return $this->belongsTo(TransactionDetail::class, 'product_id', 'id');
+        return $this->hasMany(TransactionDetail::class);
     }
 
-    public function supplierPricing(): BelongsTo
+    public function supplierPricing(): HasMany
     {
-        return $this->BelongsTo(supplierPricing::class);
+        return $this->hasMany(supplierPricing::class);
     }
-    public function stockout(): BelongsToMany
+    public function stockout(): HasMany
     {
-        return $this->BelongsToMany(Stockout::class);
+        return $this->hasMany(Stockout::class);
     }
 }

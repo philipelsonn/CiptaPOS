@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -19,18 +18,19 @@ class TransactionHeader extends Model
     protected $timestamp = true;
     protected $guarded = [];
 
-    public function paymentMethod(): HasOne
+    public function paymentMethod(): BelongsTo
     {
-        return $this->hasOne(PaymentMethod::class, 'id', 'payment_method_id');
+        return $this->belongsTo(PaymentMethod::class);
     }
+    
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'cashier_id', 'id');
+        return $this->belongsTo(User::class, 'cashier_id');
     }
 
     public function transactionDetails(): HasMany
     {
-        return $this->hasMany(TransactionDetail::class, 'transaction_header_id', 'id');
+        return $this->hasMany(TransactionDetail::class);
     }
 
     public function calculateTotalPrice()

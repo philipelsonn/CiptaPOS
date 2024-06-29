@@ -115,7 +115,7 @@
                     <div class="modal-body">
                         <div class="mb-3">
                             <label for="product_id" class="form-label">{{ __('Product') }}</label>
-                            <select id="product_id" name="product_id" class="form-select">
+                            <select id="add_product_id" name="product_id" class="form-select">
                                 <option value="Select" selected disabled>Select Product</option>
                                 @foreach ($products as $product)
                                     <option value={{$product->id}}
@@ -127,7 +127,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="supplier_id" class="form-label">{{ __('Supplier') }}</label>
-                            <select id="supplier_id" name="supplier_id" class="form-select">
+                            <select id="add_supplier_id" name="supplier_id" class="form-select">
                                 <option value="Select" selected disabled>Select Supplier</option>
                                 @foreach ($suppliers as $supplier)
                                     <option value={{$supplier->id}}
@@ -156,8 +156,8 @@
 
                 $('.invalid-feedback').remove();
                 var supplierPricings = {!! json_encode($supplierPricings) !!};
-                const supplierInput = $('#supplier_id');
-                const productInput = $('#product_id');
+                const supplierInput = $('#add_supplier_id');
+                const productInput = $('#add_product_id');
                 const priceInput = $('#price');
                 const isDuplicate = supplierPricings.some(pricing => pricing.product_id == productInput.val() && pricing.supplier_id == supplierInput.val());
                 if (isDuplicate) {
