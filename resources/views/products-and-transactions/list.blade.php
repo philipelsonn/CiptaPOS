@@ -173,9 +173,11 @@
                 });
             });
         document.getElementById('clear-all-button').addEventListener('click', function() {
-            cart = [];
-            renderCart();
-            localStorage.setItem('cart', JSON.stringify(cart));
+            if (confirm('Are you sure you want to clear the cart?')) {
+                cart = [];
+                renderCart();
+                localStorage.setItem('cart', JSON.stringify(cart));
+            }
         });
 
         function renderCart() {
